@@ -3,6 +3,8 @@ import { getRedis } from "@/lib/redis";
 import {
   DEFAULT_CODE_LANGUAGE,
   isCodeLanguage,
+  type CodeLanguage,
+  type ShareContentType,
   type StoredSharePayload,
 } from "@/lib/share";
 
@@ -12,12 +14,17 @@ function normalizeSharePayload(rawShare: unknown): StoredSharePayload | null {
       return null;
     }
 
+    const contentType: ShareContentType =
+      payload.contentType === "code" ? "code" : "text";
+    const candidateLanguage = payload.language ?? "";
+    const language: CodeLanguage = isCodeLanguage(candidateLanguage)
+      ? candidateLanguage
+      : DEFAULT_CODE_LANGUAGE;
+
     return {
       text: payload.text,
-      contentType: payload.contentType === "code" ? "code" : "text",
-      language: isCodeLanguage(payload.language ?? "")
-        ? payload.language
-        : DEFAULT_CODE_LANGUAGE,
+      contentType,
+      language,
       createdAt:
         typeof payload.createdAt === "number" ? payload.createdAt : Date.now(),
       expiresAt:
@@ -51,9 +58,11 @@ function normalizeSharePayload(rawShare: unknown): StoredSharePayload | null {
 }
 
 export async function GET(
+  request: Request,
   { params }: { params: Promise<{ code: string }> }
 ) {
   try {
+    void request;
     const { code } = await params;
     const redis = getRedis();
 
