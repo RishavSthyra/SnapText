@@ -10,10 +10,12 @@ export default function SnapText() {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState("send"); // send | receive
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSend = async () => {
     if (!text.trim()) return;
     setLoading(true);
+    setError("");
 
     try {
       const res = await fetch("/api/upload", {
@@ -25,10 +27,15 @@ export default function SnapText() {
       });
 
       const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Unable to send text");
+      }
+
       setCode(data.code);
       setText("");
     } catch (err) {
       console.error(err);
+      setError(err instanceof Error ? err.message : "Unable to send text");
     }
 
     setLoading(false);
@@ -37,10 +44,15 @@ export default function SnapText() {
   const handleFetch = async () => {
     if (!inputCode.trim()) return;
     setLoading(true);
+    setError("");
 
     try {
       const res = await fetch(`/api/fetch/${inputCode}`);
       const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Unable to fetch text");
+      }
 
       if (data.text) {
         setReceivedText(data.text);
@@ -49,6 +61,8 @@ export default function SnapText() {
       }
     } catch (err) {
       console.error(err);
+      setReceivedText("");
+      setError(err instanceof Error ? err.message : "Unable to fetch text");
     }
 
     setLoading(false);
@@ -101,6 +115,12 @@ export default function SnapText() {
         </div>
 
         <div className="w-full rounded-3xl border border-slate-200/90 bg-white/80 p-6 shadow-[0_24px_70px_-40px_rgba(30,41,59,0.55)] backdrop-blur-xl sm:p-7">
+          {error && (
+            <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+              {error}
+            </div>
+          )}
+
           {mode === "send" && (
             <>
               {!code && (

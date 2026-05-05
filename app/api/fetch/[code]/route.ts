@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server";
-import { redis } from "@/lib/redis";
+import { getRedis } from "@/lib/redis";
 
 export async function GET(
-    request: Request,
-    
-    { params }: {
-        params: Promise<{ code: string }>
-    }
+  request: Request,
+  { params }: { params: Promise<{ code: string }> }
 ) {
   try {
     const { code } = await params;
+    const redis = getRedis();
 
     const text = await redis.get(code);
 
@@ -23,10 +21,11 @@ export async function GET(
     await redis.del(code);
 
     return NextResponse.json({ text });
-
   } catch (error) {
+    console.error("Fetch API failed:", error);
+
     return NextResponse.json(
-      { error: "Something went wrong" },
+      { error: "Unable to fetch text right now" },
       { status: 500 }
     );
   }
