@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type KeyboardEvent } from "react";
 import {
   CODE_LANGUAGE_OPTIONS,
   DEFAULT_CODE_LANGUAGE,
   SHARE_EXPIRY_SECONDS,
   type CodeLanguage,
+  type ShareDeliveryStatus,
   type ShareContentType,
   type StoredSharePayload,
 } from "@/lib/share";
@@ -245,7 +246,10 @@ export default function SnapText() {
     useState<CodeLanguage>(DEFAULT_CODE_LANGUAGE);
   const [shareCode, setShareCode] = useState("");
   const [sentShare, setSentShare] = useState<SentShareState | null>(null);
+  const [sentDeliveryStatus, setSentDeliveryStatus] =
+    useState<ShareDeliveryStatus>("pending");
   const [inputCode, setInputCode] = useState("");
+  const [receivedCode, setReceivedCode] = useState("");
   const [receivedShare, setReceivedShare] = useState<StoredSharePayload | null>(
     null
   );
@@ -268,6 +272,65 @@ export default function SnapText() {
     };
   }, [sentShare]);
 
+  useEffect(() => {
+    if (!sentShare) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const checkStatus = async () => {
+      try {
+        const res = await fetch(`/api/status/${sentShare.code}`, {
+          cache: "no-store",
+        });
+
+        if (!res.ok) {
+          return;
+        }
+
+        const data = (await res.json()) as { status?: ShareDeliveryStatus };
+
+        if (
+          !cancelled &&
+          (data.status === "pending" ||
+            data.status === "received" ||
+            data.status === "expired")
+        ) {
+          setSentDeliveryStatus(data.status);
+        }
+      } catch (statusError) {
+        console.error(statusError);
+      }
+    };
+
+    void checkStatus();
+    const intervalId = window.setInterval(() => {
+      void checkStatus();
+    }, 2000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+    };
+  }, [sentShare]);
+
+  useEffect(() => {
+    if (sentDeliveryStatus !== "received" && sentDeliveryStatus !== "expired") {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setShareCode("");
+      setSentShare(null);
+      setSentDeliveryStatus("pending");
+    }, 1400);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [sentDeliveryStatus]);
+
   const secondsLeft = sentShare
     ? Math.max(0, Math.ceil((sentShare.expiresAt - countdownNow) / 1000))
     : SHARE_EXPIRY_SECONDS;
@@ -280,11 +343,25 @@ export default function SnapText() {
   const handleCopy = async (value: string, target: Exclude<CopyTarget, null>) => {
     try {
       await navigator.clipboard.writeText(value);
+
+      if (target === "received-content" && receivedCode) {
+        const res = await fetch(`/api/receive/${receivedCode}`, {
+          method: "POST",
+        });
+
+        if (!res.ok) {
+          throw new Error("Unable to mark share as received");
+        }
+
+        setReceivedCode("");
+        setReceivedShare(null);
+      }
+
       setCopiedTarget(target);
       window.setTimeout(() => setCopiedTarget(null), 1500);
     } catch (copyError) {
       console.error(copyError);
-      setError("Clipboard access failed.");
+      setError("Unable to finish copy right now.");
     }
   };
 
@@ -316,6 +393,7 @@ export default function SnapText() {
 
       setCountdownNow(Date.now());
       setShareCode(data.code);
+      setSentDeliveryStatus("pending");
       setSentShare({
         code: data.code,
         contentType: data.contentType,
@@ -350,10 +428,12 @@ export default function SnapText() {
         throw new Error(data.error || "Unable to fetch share");
       }
 
+      setReceivedCode(inputCode.trim());
       setReceivedShare(data);
       setInputCode("");
     } catch (fetchError) {
       console.error(fetchError);
+      setReceivedCode("");
       setReceivedShare(null);
       setError(
         fetchError instanceof Error
@@ -368,7 +448,44 @@ export default function SnapText() {
   const resetShareState = () => {
     setShareCode("");
     setSentShare(null);
+    setSentDeliveryStatus("pending");
     setError("");
+  };
+
+  const handleComposerKeyDown = (
+    event: KeyboardEvent<HTMLTextAreaElement>
+  ) => {
+    if (loading) {
+      return;
+    }
+
+    if (
+      composerMode === "text" &&
+      event.key === "Enter" &&
+      !event.shiftKey
+    ) {
+      event.preventDefault();
+      void handleSend();
+      return;
+    }
+
+    if (
+      composerMode === "code" &&
+      event.key === "Enter" &&
+      (event.ctrlKey || event.metaKey)
+    ) {
+      event.preventDefault();
+      void handleSend();
+    }
+  };
+
+  const handleReceiveInputKeyDown = (
+    event: KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Enter" && !loading) {
+      event.preventDefault();
+      void handleFetch();
+    }
   };
 
   return (
@@ -416,7 +533,11 @@ export default function SnapText() {
 
             {sentShare && mode === "send" && (
               <div className="rounded-full border border-sky-100 bg-sky-50 px-4 py-2 text-sm font-medium text-sky-800">
-                {formatCountdown(secondsLeft)}
+                {sentDeliveryStatus === "received"
+                  ? "Received"
+                  : sentDeliveryStatus === "expired"
+                    ? "Expired"
+                    : formatCountdown(secondsLeft)}
               </div>
             )}
           </div>
@@ -480,6 +601,7 @@ export default function SnapText() {
                 <textarea
                   value={draft}
                   onChange={(event) => setDraft(event.target.value)}
+                  onKeyDown={handleComposerKeyDown}
                   placeholder={editorPlaceholder}
                   spellCheck={!isCodeShare}
                   className={`w-full resize-none bg-white px-4 py-4 outline-none placeholder:text-slate-400 ${
@@ -564,6 +686,7 @@ export default function SnapText() {
                       event.target.value.replace(/\D/g, "").slice(0, 6)
                     )
                   }
+                  onKeyDown={handleReceiveInputKeyDown}
                   placeholder="Enter code"
                   inputMode="numeric"
                   className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-center font-mono text-lg tracking-[0.24em] text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
@@ -591,7 +714,7 @@ export default function SnapText() {
                     </div>
 
                     <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
-                      Opened once
+                      Copy to burn
                     </span>
                   </div>
 
@@ -619,6 +742,7 @@ export default function SnapText() {
                     </button>
                     <button
                       onClick={() => {
+                        setReceivedCode("");
                         setReceivedShare(null);
                         setError("");
                       }}

@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
 import {
   DEFAULT_CODE_LANGUAGE,
+  getShareStatusKey,
   isCodeLanguage,
   MAX_CODE_GENERATION_ATTEMPTS,
   SHARE_EXPIRY_SECONDS,
+  type ShareStatusPayload,
   type ShareContentType,
   type StoredSharePayload,
 } from "@/lib/share";
@@ -64,6 +66,14 @@ export async function POST(request: NextRequest) {
       burnAfterReading: true,
     };
     const code = await reserveUniqueCode(payload, SHARE_EXPIRY_SECONDS);
+    const redis = getRedis();
+    const statusPayload: ShareStatusPayload = {
+      status: "pending",
+    };
+
+    await redis.set(getShareStatusKey(code), JSON.stringify(statusPayload), {
+      ex: SHARE_EXPIRY_SECONDS,
+    });
 
     return NextResponse.json({
       code,

@@ -84,8 +84,6 @@ export async function GET(
       );
     }
 
-    await redis.del(code);
-
     return NextResponse.json(share);
   } catch (error) {
     console.error("Fetch API failed:", error);
