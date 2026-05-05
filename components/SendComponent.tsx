@@ -489,7 +489,7 @@ export default function SnapText() {
   };
 
   return (
-    <div className="px-3 py-6 sm:px-6 sm:py-8 md:py-10">
+    <div className="px-3 pb-6 pt-24 sm:px-6 sm:pb-8 sm:pt-28 md:pb-10 md:pt-32">
       <div className="mx-auto max-w-4xl">
         <div className="mb-5 text-center sm:mb-6">
           <p className="text-xs font-semibold uppercase tracking-[0.34em] text-sky-700">
