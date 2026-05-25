@@ -47,7 +47,7 @@ export default function SeoContent({
       </article>
 
       <div className="mt-16 p-6 bg-slate-50 rounded-lg">
-        <h2 className="text-xl font-semibold mb-4">Try SnapText Now</h2>
+        <h2 className="text-xl font-semibold mb-4">Try Send Anywhere Text Now</h2>
         <p className="text-slate-600 mb-4">
           Experience the fastest way to share text and convert images to text.
           No signup required.
@@ -56,7 +56,7 @@ export default function SeoContent({
           href="/"
           className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
         >
-          Start Using SnapText
+          Start Using Send Anywhere Text
         </a>
       </div>
     </div>
