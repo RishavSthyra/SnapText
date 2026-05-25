@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type KeyboardEvent } from "react";
+import toast from "react-hot-toast";
 import {
   CODE_LANGUAGE_OPTIONS,
   DEFAULT_CODE_LANGUAGE,
@@ -343,6 +344,7 @@ export default function SnapText() {
   const handleCopy = async (value: string, target: Exclude<CopyTarget, null>) => {
     try {
       await navigator.clipboard.writeText(value);
+      toast.success(target === "share-code" ? "Share code copied" : "Text copied");
 
       if (target === "received-content" && receivedCode) {
         const res = await fetch(`/api/receive/${receivedCode}`, {
@@ -362,6 +364,7 @@ export default function SnapText() {
     } catch (copyError) {
       console.error(copyError);
       setError("Unable to finish copy right now.");
+      toast.error("Unable to copy right now");
     }
   };
 
@@ -402,13 +405,15 @@ export default function SnapText() {
         burnAfterReading: data.burnAfterReading,
       });
       setDraft("");
+      toast.success("Share code created");
     } catch (sendError) {
       console.error(sendError);
-      setError(
+      const message =
         sendError instanceof Error
           ? sendError.message
-          : "Unable to create share code"
-      );
+          : "Unable to create share code";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -431,15 +436,17 @@ export default function SnapText() {
       setReceivedCode(inputCode.trim());
       setReceivedShare(data);
       setInputCode("");
+      toast.success("Share opened");
     } catch (fetchError) {
       console.error(fetchError);
       setReceivedCode("");
       setReceivedShare(null);
-      setError(
+      const message =
         fetchError instanceof Error
           ? fetchError.message
-          : "Unable to fetch share"
-      );
+          : "Unable to fetch share";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

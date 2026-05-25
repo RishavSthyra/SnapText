@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 
 const navItems = [
   { href: "/", label: "Home" },
+  { href: "/ocr", label: "Image to Text" },
   { href: "/about", label: "About" },
   { href: "/privacy-policy", label: "Privacy" },
   { href: "/contact", label: "Contact" },
@@ -128,7 +129,7 @@ export default function SiteHeader() {
   return (
     <>
       <header className="fixed inset-x-0 top-4 z-40 px-3 sm:px-6">
-        <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between gap-4 rounded-full border border-white/[0.6] bg-white/[0.72] px-4 py-3 shadow-[0_18px_50px_-35px_rgba(15,23,42,0.45)] backdrop-blur-2xl sm:px-6">
+        <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between gap-4 rounded-full border border-slate-200 bg-white/82 px-4 py-3 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.24)] backdrop-blur-2xl sm:px-6">
           <Link
             href="/"
             className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-950"
