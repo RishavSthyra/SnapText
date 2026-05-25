@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Send Text - Instant Text Sharing Tool | SnapText",
   description:
     "Send text instantly with short-lived burn-after-reading codes. Share text and code snippets securely without signup. Perfect for sharing sensitive information.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/send-text"}, keywords:
     "send text, text sharing, instant text, share text online, burn after reading, ephemeral text, temporary text message, text link, anonymous text",
 };
 

@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Photo Scanner - Scan Photos to Text | SnapText",
   description:
     "Scan photos to extract text. Photo scanner for receipts, documents, and images. Free OCR-powered scanning.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/photo-scanner"}, keywords:
     "photo scanner, scan photos, scan photo to text, photo OCR, scan receipt photo, photo text scanner",
 };
 

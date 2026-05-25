@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "About SNAPTEXT | Temporary Text and Code Sharing Platform",
   description:
     "Learn about SNAPTEXT, a temporary text and code sharing platform built for faster delivery, short-lived access, and cleaner digital handoff workflows.",
-  keywords: [
+  alternates: { canonical: "https://send-anywhere-text.com/about"}, keywords: [
     "about SNAPTEXT",
     "temporary sharing platform",
     "text sharing tool",

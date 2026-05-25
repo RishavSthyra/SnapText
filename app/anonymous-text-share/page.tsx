@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Anonymous Text Share - Send Text Without Identity | SnapText",
   description:
     "Share text anonymously without any registration or personal information. Send anonymous messages, code, and sensitive content. Completely private.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/anonymous-text-share"}, keywords:
     "anonymous text, anonymous text sharing, anonymous messaging, anonymous sender, private text share, no registration text, anonymous notes",
 };
 

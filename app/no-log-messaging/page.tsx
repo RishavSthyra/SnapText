@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "No Log Messaging - Messages Without Logs | SnapText",
   description:
     "Send messages without logs or tracking. No-log messaging for complete privacy. Free, anonymous, and self-destructing.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/no-log-messaging"}, keywords:
     "no log messaging, no log messages, messages without logs, log free messaging, private messaging no logs",
 };
 

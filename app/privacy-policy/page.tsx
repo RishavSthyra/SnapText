@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Privacy Policy | SNAPTEXT Data Handling, Security, and Retention",
   description:
     "Read the SNAPTEXT privacy policy covering temporary content handling, data retention, security expectations, platform moderation, and user privacy rights.",
-  keywords: [
+  alternates: { canonical: "https://send-anywhere-text.com/privacy-policy"}, keywords: [
     "SNAPTEXT privacy policy",
     "temporary sharing privacy",
     "text sharing data policy",

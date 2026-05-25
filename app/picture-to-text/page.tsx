@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Picture to Text - Extract Text from Pictures | SnapText",
   description:
     "Convert picture to text with our free OCR tool. Extract text from photos, screenshots, and any images. Instant results, no signup required.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/picture-to-text"}, keywords:
     "picture to text, picture text extractor, photo to text, image to text, extract text from picture, picture OCR, convert picture to text",
 };
 

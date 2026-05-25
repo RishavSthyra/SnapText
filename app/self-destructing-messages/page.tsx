@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Self-Destructing Messages - Ephemeral Text That Disappears | SnapText",
   description:
     "Send self-destructing messages that permanently disappear after being read. Ephemeral text for maximum privacy and security. Free.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/self-destructing-messages"}, keywords:
     "self-destructing messages, self-destructing text, ephemeral messages, disappearing messages, vanishing messages, disposable messages",
 };
 

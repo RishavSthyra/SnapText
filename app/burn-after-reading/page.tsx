@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Burn After Reading - Self-Destructing Text Messages | SnapText",
   description:
     "Send self-destructing messages that permanently disappear after being read. Burn after reading text for sensitive info, passwords, and private messages. Free.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/burn-after-reading"}, keywords:
     "burn after reading, self-destructing messages, ephemeral messages, disposable text, temporary messages, one-time messages, vanishing messages, private messaging",
 };
 

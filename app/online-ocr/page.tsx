@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Online OCR - Convert Images to Text in Your Browser | SnapText",
   description:
     "Use our online OCR tool directly in your browser. No downloads, no installations—just upload and extract text from images instantly. Works on all devices.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/online-ocr"}, keywords:
     "online OCR, browser OCR, web OCR, image to text online, OCR in browser, cloud OCR, web-based OCR, no download OCR",
 };
 

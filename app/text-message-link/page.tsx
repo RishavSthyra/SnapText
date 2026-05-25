@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Text Message Link - Send Text via Link | SnapText",
   description:
     "Create text message links that recipients view in browser. Share text without apps or accounts. Free, secure, and instant.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/text-message-link"}, keywords:
     "text message link, link to text, share text link, text link, message link, URL text, link message",
 };
 

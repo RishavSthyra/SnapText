@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Character Recognition - OCR Character Reader | SnapText",
   description:
     "Advanced OCR character recognition for extracting text from images. Character reader supporting 100+ languages. Free and accurate.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/character-recognition"}, keywords:
     "character recognition, OCR character recognition, optical character recognition, text recognition, character reader, document OCR",
 };
 

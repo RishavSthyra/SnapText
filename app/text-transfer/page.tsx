@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Text Transfer - Transfer Text Between Devices | SnapText",
   description:
     "Transfer text between devices instantly. Share clipboard content, code snippets, and notes via temporary links. Free and secure.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/text-transfer"}, keywords:
     "text transfer, transfer text, send text, text sharing, clipboard transfer, share text, text between devices",
 };
 

@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Code Snippet Share - Share Code Securely | SnapText",
   description:
     "Share code snippets with preserved formatting and indentation. Perfect for developers. Free, secure, and supports all programming languages.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/code-snippet-share"}, keywords:
     "code snippet share, share code, share code snippet, code sharing, share programming code, code paste, code sharing tool",
 };
 

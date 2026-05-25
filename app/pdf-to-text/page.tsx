@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "PDF to Text - Extract Text from PDF Files | SnapText",
   description:
     "Convert PDF to text instantly. Extract text from scanned PDFs, PDF documents, and ebook files. Free, fast, and accurate.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/pdf-to-text"}, keywords:
     "PDF to text, extract text from PDF, PDF text extractor, scanned PDF to text, PDF OCR, convert PDF, PDF converter",
 };
 

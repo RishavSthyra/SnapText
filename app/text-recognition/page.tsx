@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Text Recognition - Extract and Recognize Text from Images | SnapText",
   description:
     "Advanced text recognition using OCR technology. Recognize text from photos, screenshots, and documents. Free and accurate.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/text-recognition"}, keywords:
     "text recognition, OCR text recognition, recognize text, text from image, image text recognition, optical text recognition",
 };
 

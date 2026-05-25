@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Scan Text - Extract Text from Scans | SnapText",
   description:
     "Scan text from documents, receipts, and papers. OCR-powered text scanning from any scanned image. Free and accurate.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/scan-text"}, keywords:
     "scan text, scan to text, text scanning, document scan text, scan text from image, OCR scanning",
 };
 

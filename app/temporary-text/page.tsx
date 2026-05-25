@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Temporary Text - Disposable Text Messages | SnapText",
   description:
     "Send temporary text that expires and disappears. Disposable messages for sharing information that shouldn't persist. Free and instant.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/temporary-text"}, keywords:
     "temporary text, disposable text, expiring text, text expiration, temporary message, disposable message, short-lived text",
 };
 

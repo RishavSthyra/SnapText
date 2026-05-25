@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Convert Image to Text - Free Image Text Converter | SnapText",
   description:
     "Convert image to text with our free converter. Supports photos, scanned documents, screenshots, and more. Instant results, no signup required.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/convert-image-to-text"}, keywords:
     "convert image to text, image text converter, convert photo to text, picture to text, image to string, image to editable text",
 };
 

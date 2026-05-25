@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Private Messaging - Secure Temporary Messages | SnapText",
   description:
     "Send private messages that self-destruct after reading. Secure, ephemeral messaging without accounts or tracking. Free and anonymous.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/private-messaging"}, keywords:
     "private messaging, secure messaging, private messages, ephemeral messages, temporary messages, self-destructing messages, private text",
 };
 

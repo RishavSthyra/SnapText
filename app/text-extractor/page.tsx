@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Text Extractor - Extract Text from Any Image | SnapText",
   description:
     "Powerful text extractor tool that pulls text from images, screenshots, photos, and scanned documents. Fast, accurate, and completely free to use.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/text-extractor"}, keywords:
     "text extractor, extract text, text extraction, image text extraction, OCR, optical character recognition, text from image",
 };
 

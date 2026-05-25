@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Clipboard Share - Share Clipboard Content Securely | SnapText",
   description:
     "Share clipboard content instantly with temporary links. Paste text, get a shareable link, and keep your clipboard private. Free and secure.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/clipboard-share"}, keywords:
     "clipboard share, share clipboard, clipboard sharing, share text from clipboard, clipboard transfer, share copied text",
 };
 

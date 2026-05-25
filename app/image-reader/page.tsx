@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Image Reader - Read Text from Images | SnapText",
   description:
     "Extract and read text from any image. Image reader tool for photos, screenshots, and documents. Free and accurate OCR.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/image-reader"}, keywords:
     "image reader, read image text, read text from image, image to text reader, photo reader, screenshot reader",
 };
 

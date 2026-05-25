@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "OCR Converter - Convert Images to Editable Text | SnapText",
   description:
     "Use our OCR converter to transform images, scans, and documents into editable text. Free, fast, and accurate text conversion from any image format.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/ocr-converter"}, keywords:
     "OCR converter, image to text converter, text converter, convert to text, OCR software, optical character recognition converter",
 };
 

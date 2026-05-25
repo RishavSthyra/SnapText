@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Contact SNAPTEXT | Support, Partnerships, and Product Inquiries",
   description:
     "Contact the SNAPTEXT team for platform support, product feedback, business conversations, technical issues, and trust or safety questions.",
-  keywords: [
+  alternates: { canonical: "https://send-anywhere-text.com/contact"}, keywords: [
     "contact SNAPTEXT",
     "SnapText support",
     "temporary sharing support",

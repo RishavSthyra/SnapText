@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Secure Text Transfer - Transfer Text Securely | SnapText",
   description:
     "Transfer text securely via encrypted temporary links. Private text transfer for sensitive information. Free and instant.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/secure-text-transfer"}, keywords:
     "secure text transfer, secure text sharing, encrypted text transfer, private text, secure text message",
 };
 

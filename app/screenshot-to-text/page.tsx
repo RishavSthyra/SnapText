@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Screenshot to Text - Extract Text from Screenshots Instantly | SnapText",
   description:
     "Convert screenshot to text instantly. Extract text from screen captures, window screenshots, and any image. Free, fast, and accurate.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/screenshot-to-text"}, keywords:
     "screenshot to text, screenshot text extractor, capture text from screen, screen capture OCR, extract text from screenshot, screenshot OCR",
 };
 

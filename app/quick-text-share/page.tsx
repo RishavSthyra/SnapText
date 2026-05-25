@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Quick Text Share - Share Text in Seconds | SnapText",
   description:
     "Share text quickly with temporary links. No signup, no delay—just paste text and share. Perfect for quick sharing needs.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/quick-text-share"}, keywords:
     "quick text share, quick text, fast text share, share text fast, rapid text share, quick sharing",
 };
 

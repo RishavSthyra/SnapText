@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Document Reader - Read Text from Documents | SnapText",
   description:
     "Read text from document images. Document reader for scanned papers, PDFs, and files. Free OCR document reading.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/document-reader"}, keywords:
     "document reader, read document text, read text from document, document OCR, scan document text, scanned document reader",
 };
 

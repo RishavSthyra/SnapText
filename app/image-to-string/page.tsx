@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Image to String - Convert Images to String Text | SnapText",
   description:
     "Convert any image to string text. Extract string content from photos, screenshots, and documents. Free and accurate.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/image-to-string"}, keywords:
     "image to string, image to string text, convert image to string, image string extraction, extract string from image",
 };
 

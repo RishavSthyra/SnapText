@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Free OCR Tool - Extract Text from Images Online | SnapText",
   description:
     "Use our free OCR tool to extract text from images, screenshots, and scanned documents. No signup required, supports 100+ languages, and delivers accurate results in seconds.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/free-ocr-tool"}, keywords:
     "free OCR tool, online OCR, extract text from image, free text extractor, OCR software, image to text free, scan to text, document OCR",
 };
 

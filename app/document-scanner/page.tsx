@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Document Scanner - Scan Documents to Text Online | SnapText",
   description:
     "Free online document scanner. Scan papers, receipts, contracts, and documents to extract text. No app needed—works in any browser.",
-  keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/document-scanner"}, keywords:
     "document scanner, scan document, scan to text, scan papers, document OCR, online scanner, mobile scanner, PDF scanner",
 };
 
