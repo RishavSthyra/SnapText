@@ -199,7 +199,7 @@ export default function OcrWorkspace() {
         return nextHistory;
       });
 
-      toast.success("Text extracted in your browser", { id: loadingToast });
+      toast.success("Text extracted", { id: loadingToast });
     } catch (error) {
       console.error(error);
       setOcrStatus("OCR failed");
@@ -316,7 +316,6 @@ export default function OcrWorkspace() {
                 </div>
 
                 <div className="mb-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600">
-                  {isLoading ? ocrStatus : "OCR runs locally in your browser"}
                   {isLoading && ocrProgress !== null ? ` (${ocrProgress}%)` : ""}
                 </div>
 
