@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Cropper, { type Area, type Point } from "react-easy-crop";
 import toast from "react-hot-toast";
+import { createWorker, PSM } from "tesseract.js";
 import ImageDropzone from "@/components/ocr/ImageDropzone";
 import OcrHistory from "@/components/ocr/OcrHistory";
 import { useObjectUrl } from "@/hooks/useObjectUrl";
@@ -10,37 +11,25 @@ import { OCR_HISTORY_LIMIT, type OcrHistoryItem } from "@/lib/ocr-types";
 import { getCroppedImageBlob } from "@/utils/crop-image";
 
 const OCR_SESSION_HISTORY_KEY = "snaptext:ocr-history";
+type BrowserOcrWorker = Awaited<ReturnType<typeof createWorker>>;
+type OcrProgressMessage = {
+  progress: number;
+  status: string;
+};
 
-interface OcrResponse {
-  text?: string;
-  rawText?: string;
-  confidence?: number | null;
-  fileName?: string;
-  aiEnhanced?: boolean;
-  aiModel?: string;
-  aiSkippedReason?: string;
-  error?: string;
-}
-
-async function readOcrError(response: Response) {
-  const contentType = response.headers.get("content-type") || "";
-
-  if (contentType.includes("application/json")) {
-    const data = (await response.json()) as OcrResponse;
-    return data.error || "Unable to extract text";
+function formatOcrStatus(status: string) {
+  switch (status) {
+    case "loading tesseract core":
+      return "Loading OCR engine";
+    case "loading language traineddata":
+      return "Loading language data";
+    case "initializing api":
+      return "Initializing OCR";
+    case "recognizing text":
+      return "Recognizing text";
+    default:
+      return "Preparing OCR";
   }
-
-  const bodyText = (await response.text()).trim();
-
-  if (response.status === 504) {
-    return "OCR timed out on the server. Please try a smaller crop or retry in a moment.";
-  }
-
-  if (bodyText) {
-    return bodyText.slice(0, 200);
-  }
-
-  return "Unable to extract text";
 }
 
 function isOcrHistoryItem(value: unknown): value is OcrHistoryItem {
@@ -75,12 +64,17 @@ function writeSessionHistory(history: OcrHistoryItem[]) {
 export default function OcrWorkspace() {
   const [file, setFile] = useState<File | null>(null);
   const imageUrl = useObjectUrl(file);
+  const isMountedRef = useRef(true);
+  const workerRef = useRef<BrowserOcrWorker | null>(null);
+  const workerPromiseRef = useRef<Promise<BrowserOcrWorker> | null>(null);
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [resultText, setResultText] = useState("");
   const [confidence, setConfidence] = useState<number | null>(null);
   const [aiEnhanced, setAiEnhanced] = useState(false);
+  const [ocrStatus, setOcrStatus] = useState("Idle");
+  const [ocrProgress, setOcrProgress] = useState<number | null>(null);
   const [history, setHistory] = useState<OcrHistoryItem[]>(() => {
     if (typeof window === "undefined") {
       return [];
@@ -89,6 +83,58 @@ export default function OcrWorkspace() {
     return readSessionHistory();
   });
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+      workerPromiseRef.current = null;
+
+      if (workerRef.current) {
+        void workerRef.current.terminate();
+        workerRef.current = null;
+      }
+    };
+  }, []);
+
+  const getOcrWorker = useCallback(async () => {
+    if (!workerPromiseRef.current) {
+      workerPromiseRef.current = createWorker("eng", 1, {
+        logger: (message: OcrProgressMessage) => {
+          if (!isMountedRef.current) {
+            return;
+          }
+
+          setOcrStatus(formatOcrStatus(message.status));
+          setOcrProgress(
+            Number.isFinite(message.progress)
+              ? Math.round(message.progress * 100)
+              : null
+          );
+        },
+      })
+        .then(async (worker) => {
+          workerRef.current = worker;
+          await worker.setParameters({
+            preserve_interword_spaces: "1",
+            tessedit_pageseg_mode: PSM.SINGLE_BLOCK,
+            user_defined_dpi: "300",
+          });
+          return worker;
+        })
+        .catch((error) => {
+          workerPromiseRef.current = null;
+          throw error;
+        });
+    }
+
+    return workerPromiseRef.current;
+  }, []);
+
+  useEffect(() => {
+    if (file) {
+      void getOcrWorker();
+    }
+  }, [file, getOcrWorker]);
 
   const handleFile = (nextFile: File) => {
     setFile(nextFile);
@@ -114,39 +160,37 @@ export default function OcrWorkspace() {
 
     try {
       const croppedBlob = await getCroppedImageBlob(imageUrl, croppedAreaPixels);
-      const formData = new FormData();
+      const worker = await getOcrWorker();
+      setOcrStatus("Recognizing text");
+      setOcrProgress(0);
 
-      formData.append(
-        "image",
-        croppedBlob,
-        `${file.name.replace(/\.[^.]+$/, "") || "crop"}-crop.png`
-      );
+      const {
+        data: { text, confidence: rawConfidence },
+      } = await worker.recognize(croppedBlob);
 
-      const response = await fetch("/api/ocr", {
-        method: "POST",
-        body: formData,
-      });
+      const nextText = text.trim();
 
-      if (!response.ok) {
-        throw new Error(await readOcrError(response));
+      if (!nextText) {
+        throw new Error(
+          "No readable text was found in the selected crop. Try a larger or clearer area."
+        );
       }
 
-      const data = (await response.json()) as OcrResponse;
+      const nextConfidence =
+        typeof rawConfidence === "number" ? Math.round(rawConfidence) : null;
 
-      if (!data.text) {
-        throw new Error(data.error || "Unable to extract text");
-      }
-
-      setResultText(data.text);
-      setConfidence(data.confidence ?? null);
-      setAiEnhanced(data.aiEnhanced === true);
+      setResultText(nextText);
+      setConfidence(nextConfidence);
+      setAiEnhanced(false);
+      setOcrStatus("OCR complete");
+      setOcrProgress(100);
 
       const historyItem: OcrHistoryItem = {
         id: crypto.randomUUID(),
-        text: data.text,
-        fileName: data.fileName || file.name || "cropped-image.png",
+        text: nextText,
+        fileName: file.name || "cropped-image.png",
         createdAt: Date.now(),
-        confidence: data.confidence ?? null,
+        confidence: nextConfidence,
       };
 
       setHistory((current) => {
@@ -155,12 +199,11 @@ export default function OcrWorkspace() {
         return nextHistory;
       });
 
-      toast.success(
-        data.aiEnhanced ? "Text extracted and refined" : "Text extracted",
-        { id: loadingToast }
-      );
+      toast.success("Text extracted in your browser", { id: loadingToast });
     } catch (error) {
       console.error(error);
+      setOcrStatus("OCR failed");
+      setOcrProgress(null);
       toast.error(
         error instanceof Error ? error.message : "Unable to extract text",
         { id: loadingToast }
@@ -270,6 +313,11 @@ export default function OcrWorkspace() {
                       AI refined
                     </span>
                   )}
+                </div>
+
+                <div className="mb-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600">
+                  {isLoading ? ocrStatus : "OCR runs locally in your browser"}
+                  {isLoading && ocrProgress !== null ? ` (${ocrProgress}%)` : ""}
                 </div>
 
                 <div className="min-h-72 rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-7 whitespace-pre-wrap text-slate-800">
