@@ -1,19 +1,11 @@
+import os from "os";
 import sharp from "sharp";
-import path from "path";
 import { PSM, createWorker } from "tesseract.js";
 
 export { OCR_HISTORY_LIMIT, type OcrHistoryItem } from "@/lib/ocr-types";
 
 export const OCR_MAX_FILE_SIZE_BYTES = 8 * 1024 * 1024;
-const tesseractWorkerPath = path.join(
-  process.cwd(),
-  "node_modules",
-  "tesseract.js",
-  "src",
-  "worker-script",
-  "node",
-  "index.js"
-);
+const tesseractCachePath = os.tmpdir();
 
 export async function preprocessImageForOcr(input: Buffer) {
   return sharp(input)
@@ -28,8 +20,7 @@ export async function preprocessImageForOcr(input: Buffer) {
 
 export async function recognizeTextFromImage(input: Buffer) {
   const worker = await createWorker("eng", 1, {
-    cachePath: "/tmp/snaptext-tesseract",
-    workerPath: tesseractWorkerPath,
+    cachePath: `${tesseractCachePath}/snaptext-tesseract`,
   });
 
   try {

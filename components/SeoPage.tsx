@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 interface SeoContentProps {
   title: string;
   description: string;
@@ -8,7 +10,6 @@ interface SeoContentProps {
 }
 
 export default function SeoContent({
-  title,
   description,
   h1,
   content,
@@ -33,12 +34,12 @@ export default function SeoContent({
             <ul className="space-y-2">
               {relatedLinks.map((link) => (
                 <li key={link.href}>
-                  <a
+                  <Link
                     href={link.href}
                     className="text-blue-600 hover:text-blue-800 underline"
                   >
                     {link.text}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -52,12 +53,12 @@ export default function SeoContent({
           Experience the fastest way to share text and convert images to text.
           No signup required.
         </p>
-        <a
+        <Link
           href="/"
           className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
         >
           Start Using Send Anywhere Text
-        </a>
+        </Link>
       </div>
     </div>
   );
