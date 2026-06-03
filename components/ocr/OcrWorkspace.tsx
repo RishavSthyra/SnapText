@@ -22,6 +22,27 @@ interface OcrResponse {
   error?: string;
 }
 
+async function readOcrError(response: Response) {
+  const contentType = response.headers.get("content-type") || "";
+
+  if (contentType.includes("application/json")) {
+    const data = (await response.json()) as OcrResponse;
+    return data.error || "Unable to extract text";
+  }
+
+  const bodyText = (await response.text()).trim();
+
+  if (response.status === 504) {
+    return "OCR timed out on the server. Please try a smaller crop or retry in a moment.";
+  }
+
+  if (bodyText) {
+    return bodyText.slice(0, 200);
+  }
+
+  return "Unable to extract text";
+}
+
 function isOcrHistoryItem(value: unknown): value is OcrHistoryItem {
   return (
     typeof value === "object" &&
@@ -105,9 +126,14 @@ export default function OcrWorkspace() {
         method: "POST",
         body: formData,
       });
+
+      if (!response.ok) {
+        throw new Error(await readOcrError(response));
+      }
+
       const data = (await response.json()) as OcrResponse;
 
-      if (!response.ok || !data.text) {
+      if (!data.text) {
         throw new Error(data.error || "Unable to extract text");
       }
 

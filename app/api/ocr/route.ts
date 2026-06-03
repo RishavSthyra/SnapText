@@ -8,8 +8,11 @@ import { postprocessOcrText } from "@/lib/ocr-ai";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
+const OCR_AI_TIME_BUDGET_MS = 45_000;
 
 export async function POST(request: NextRequest) {
+  const requestStartedAt = Date.now();
+
   try {
     const formData = await request.formData();
     const image = formData.get("image");
@@ -49,7 +52,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const postprocessed = await postprocessOcrText(result.text);
+    const elapsedMs = Date.now() - requestStartedAt;
+    const postprocessed =
+      elapsedMs >= OCR_AI_TIME_BUDGET_MS
+        ? {
+            text: result.text,
+            enhanced: false,
+            skippedReason: "server-time-budget",
+          }
+        : await postprocessOcrText(result.text);
 
     return NextResponse.json({
       text: postprocessed.text,
