@@ -49,10 +49,10 @@ export default function ImageDropzone({
       }}
       onDragLeave={() => setIsDragging(false)}
       onDrop={handleDrop}
-      className={`rounded-2xl border border-dashed p-4 text-center transition ${
+      className={`rounded-[2rem] border border-dashed p-4 text-center transition ${
         isDragging
-          ? "border-sky-400 bg-sky-50"
-          : "border-slate-200 bg-white"
+          ? "border-[#7d93ff] bg-[rgba(19,24,52,0.92)]"
+          : "border-white/10 bg-[rgba(10,14,31,0.9)]"
       }`}
     >
       <input
@@ -65,14 +65,14 @@ export default function ImageDropzone({
       />
 
       <div className="mx-auto flex min-h-36 max-w-xl flex-col items-center justify-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-950 text-white">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[linear-gradient(90deg,#734dff_0%,#5d8fff_100%)] text-white shadow-[0_18px_38px_-20px_rgba(93,143,255,0.9)]">
           <span className="text-xl font-semibold">+</span>
         </div>
         <div>
-          <p className="text-base font-semibold text-slate-900">
+          <p className="text-base font-semibold text-white">
             Drop an image here
           </p>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-white/50">
             PNG, JPG, or WebP up to 8MB
           </p>
         </div>
@@ -80,7 +80,7 @@ export default function ImageDropzone({
           type="button"
           disabled={disabled}
           onClick={() => inputRef.current?.click()}
-          className="rounded-2xl bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded-2xl bg-[linear-gradient(90deg,#734dff_0%,#5d8fff_100%)] px-4 py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
         >
           Choose image
         </button>

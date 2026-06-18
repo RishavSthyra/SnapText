@@ -1,11 +1,12 @@
+import { randomInt } from "node:crypto";
+
 export function generateCode() {
   const LENGTH_OF_GENERATED_CODE = 6;
-  let GENERATED_STRING = "";
+  let generatedString = "";
 
   for (let i = 0; i < LENGTH_OF_GENERATED_CODE; i++) {
-    const num = Math.floor(Math.random() * 10);
-    GENERATED_STRING = GENERATED_STRING + num;
+    generatedString += randomInt(10).toString();
   }
 
-  return GENERATED_STRING;
+  return generatedString;
 }

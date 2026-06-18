@@ -1,61 +1,6 @@
 import { NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
-import {
-  DEFAULT_CODE_LANGUAGE,
-  isCodeLanguage,
-  type CodeLanguage,
-  type ShareContentType,
-  type StoredSharePayload,
-} from "@/lib/share";
-
-function normalizeSharePayload(rawShare: unknown): StoredSharePayload | null {
-  const normalizeObject = (payload: Partial<StoredSharePayload>) => {
-    if (typeof payload.text !== "string") {
-      return null;
-    }
-
-    const contentType: ShareContentType =
-      payload.contentType === "code" ? "code" : "text";
-    const candidateLanguage = payload.language ?? "";
-    const language: CodeLanguage = isCodeLanguage(candidateLanguage)
-      ? candidateLanguage
-      : DEFAULT_CODE_LANGUAGE;
-
-    return {
-      text: payload.text,
-      contentType,
-      language,
-      createdAt:
-        typeof payload.createdAt === "number" ? payload.createdAt : Date.now(),
-      expiresAt:
-        typeof payload.expiresAt === "number" ? payload.expiresAt : Date.now(),
-      burnAfterReading: true as const,
-    };
-  };
-
-  if (typeof rawShare === "object" && rawShare !== null) {
-    return normalizeObject(rawShare as Partial<StoredSharePayload>);
-  }
-
-  if (typeof rawShare !== "string") {
-    return null;
-  }
-
-  try {
-    return normalizeObject(JSON.parse(rawShare) as Partial<StoredSharePayload>);
-  } catch {
-    return {
-      text: rawShare,
-      contentType: "text",
-      language: DEFAULT_CODE_LANGUAGE,
-      createdAt: Date.now(),
-      expiresAt: Date.now(),
-      burnAfterReading: true,
-    };
-  }
-
-  return null;
-}
+import { normalizeStoredSharePayload } from "@/lib/share";
 
 export async function GET(
   request: Request,
@@ -75,12 +20,23 @@ export async function GET(
       );
     }
 
-    const share = normalizeSharePayload(rawShare);
+    const share = normalizeStoredSharePayload(rawShare);
 
     if (!share) {
       return NextResponse.json(
         { error: "Stored share payload is invalid" },
         { status: 500 }
+      );
+    }
+
+    if (share.expiresAt <= Date.now() || share.status === "expired") {
+      return NextResponse.json({ error: "Code expired or not found" }, { status: 410 });
+    }
+
+    if (share.status === "received") {
+      return NextResponse.json(
+        { error: "This share has already been opened" },
+        { status: 410 }
       );
     }
 

@@ -55,9 +55,6 @@ const content = `
 <h3>Password Sharing</h3>
 <p>Share passwords via text link. Recipient clicks, reads, password is deleted. No permanent record.</p>
 
-<h3>Code Sharing</h3>
-<p>Share code snippets via link. Perfect formatting, no app required, auto-deleted after viewing.</p>
-
 <h3>Cross-Platform Sharing</h3>
 <p>Share text from any platform to any platform. Links work universally—no compatibility issues.</p>
 

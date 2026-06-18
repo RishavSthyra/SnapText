@@ -1,39 +1,61 @@
 "use client";
 
-import { useEffect, useState, type KeyboardEvent } from "react";
+import {
+  ArrowRight,
+  Clock3,
+  Download,
+  FileText,
+  Link2,
+  PenLine,
+  ShieldCheck,
+  Zap,
+} from "lucide-react";
+import {
+  useEffect,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+} from "react";
 import toast from "react-hot-toast";
 import {
-  CODE_LANGUAGE_OPTIONS,
-  DEFAULT_CODE_LANGUAGE,
   SHARE_EXPIRY_SECONDS,
-  type CodeLanguage,
+  SHARE_TEXT_MAX_CHARACTERS,
   type ShareDeliveryStatus,
-  type ShareContentType,
   type StoredSharePayload,
 } from "@/lib/share";
 
 type Mode = "send" | "receive";
-type CopyTarget = "share-code" | "received-content" | null;
+type CopyTarget = "access-code" | "received-content" | null;
 
 interface SentShareState {
   code: string;
-  contentType: ShareContentType;
-  language: CodeLanguage;
   expiresAt: number;
   burnAfterReading: boolean;
 }
 
-interface HighlightToken {
-  text: string;
-  className: string;
-}
-
-function getLanguageLabel(language: CodeLanguage) {
-  return (
-    CODE_LANGUAGE_OPTIONS.find((option) => option.value === language)?.label ??
-    "Plain text"
-  );
-}
+const featureCards = [
+  {
+    title: "Private & Secure",
+    description: "Your data is encrypted and never stored permanently.",
+    icon: (
+      <ShieldCheck className="h-5 w-5" strokeWidth={1.8} />
+    ),
+  },
+  {
+    title: "Fast & Simple",
+    description: "Share text in seconds, not minutes.",
+    icon: (
+      <Zap className="h-5 w-5" strokeWidth={1.8} />
+    ),
+  },
+  {
+    title: "Short & Shareable",
+    description: "Get a clean, short link easy to share anywhere.",
+    icon: (
+      <Link2 className="h-5 w-5" strokeWidth={1.8} />
+    ),
+  },
+];
 
 function formatCountdown(totalSeconds: number) {
   const safeSeconds = Math.max(0, totalSeconds);
@@ -45,206 +67,127 @@ function formatCountdown(totalSeconds: number) {
     .padStart(2, "0")}`;
 }
 
-function getHighlightRegex(language: CodeLanguage) {
-  switch (language) {
-    case "javascript":
-    case "typescript":
-      return /(\/\/.*|\/\*[\s\S]*?\*\/|"(?:\\.|[^"])*"|'(?:\\.|[^'])*'|`(?:\\.|[^`])*`|\b(?:const|let|var|function|return|if|else|for|while|switch|case|break|continue|class|new|try|catch|finally|throw|import|from|export|default|async|await|interface|type|extends|implements|public|private|protected|enum|typeof|instanceof|in|of)\b|\b(?:true|false|null|undefined)\b|\b\d+(?:\.\d+)?\b)/gm;
-    case "python":
-      return /(#.*|"(?:\\.|[^"])*"|'(?:\\.|[^'])*'|\b(?:def|return|if|elif|else|for|while|class|import|from|as|try|except|finally|raise|with|lambda|pass|break|continue|async|await|True|False|None|in|is|and|or|not)\b|\b\d+(?:\.\d+)?\b)/gm;
-    case "bash":
-      return /(#.*|"(?:\\.|[^"])*"|'(?:\\.|[^'])*'|\$\w+|\b(?:if|then|else|fi|for|do|done|case|esac|function|echo|export|sudo|cd|grep|cat|ls|pwd|exit)\b|\b\d+(?:\.\d+)?\b)/gm;
-    case "json":
-      return /("(?:\\.|[^"])*"(?=\s*:)|"(?:\\.|[^"])*"|\b(?:true|false|null)\b|\b\d+(?:\.\d+)?\b|[{}[\],:])/gm;
-    case "html":
-      return /(<!--[\s\S]*?-->|<\/?[A-Za-z][^>]*>|"(?:\\.|[^"])*"|'(?:\\.|[^'])*')/gm;
-    case "css":
-      return /(\/\*[\s\S]*?\*\/|"(?:\\.|[^"])*"|'(?:\\.|[^'])*'|#[0-9a-fA-F]{3,8}|\.[A-Za-z_-][\w-]*|@[A-Za-z-]+|\b(?:color|background|display|grid|flex|padding|margin|border|font|width|height|position|absolute|relative|fixed|transform|transition|gap|justify-content|align-items)\b|\b\d+(?:px|rem|em|%|vh|vw)?\b)/gm;
-    case "sql":
-      return /(--.*|\/\*[\s\S]*?\*\/|"(?:\\.|[^"])*"|'(?:\\.|[^'])*'|\b(?:SELECT|FROM|WHERE|INSERT|INTO|VALUES|UPDATE|SET|DELETE|JOIN|LEFT|RIGHT|INNER|OUTER|ORDER|BY|GROUP|LIMIT|CREATE|TABLE|ALTER|DROP|AND|OR|NOT|NULL|AS|ON|DISTINCT)\b|\b\d+(?:\.\d+)?\b)/g;
-    default:
-      return null;
-  }
-}
-
-function getTokenClass(
-  token: string,
-  language: CodeLanguage,
-  source: string,
-  index: number
-) {
-  if (
-    token.startsWith("//") ||
-    token.startsWith("/*") ||
-    (token.startsWith("#") && language !== "css") ||
-    token.startsWith("--") ||
-    token.startsWith("<!--")
-  ) {
-    return "text-slate-400";
-  }
-
-  if (token.startsWith('"') || token.startsWith("'") || token.startsWith("`")) {
-    if (language === "json") {
-      const trailingSource = source.slice(index + token.length);
-      return /^\s*:/.test(trailingSource) ? "text-sky-700" : "text-emerald-600";
-    }
-
-    return "text-emerald-600";
-  }
-
-  if (token.startsWith("$")) {
-    return "text-orange-600";
-  }
-
-  if (token.startsWith("<")) {
-    return "text-sky-700";
-  }
-
-  if (token.startsWith(".")) {
-    return "text-cyan-700";
-  }
-
-  if (token.startsWith("@")) {
-    return "text-fuchsia-600";
-  }
-
-  if (token.startsWith("#") && language === "css") {
-    return "text-rose-500";
-  }
-
-  if (/^[{}[\],:]+$/.test(token)) {
-    return "text-slate-500";
-  }
-
-  if (/^\d/.test(token)) {
-    return "text-amber-600";
-  }
-
-  if (
-    /^(true|false|null|undefined|True|False|None|SELECT|FROM|WHERE|INSERT|INTO|VALUES|UPDATE|SET|DELETE|JOIN|LEFT|RIGHT|INNER|OUTER|ORDER|BY|GROUP|LIMIT|CREATE|TABLE|ALTER|DROP|AND|OR|NOT|NULL|AS|ON|DISTINCT)$/.test(
-      token
-    )
-  ) {
-    return "text-violet-600";
-  }
-
-  return "text-rose-600";
-}
-
-function tokenizeCode(source: string, language: CodeLanguage): HighlightToken[] {
-  const regex = getHighlightRegex(language);
-
-  if (!regex) {
-    return [{ text: source, className: "text-slate-700" }];
-  }
-
-  const tokens: HighlightToken[] = [];
-  let cursor = 0;
-
-  for (const match of source.matchAll(regex)) {
-    const token = match[0];
-    const index = match.index ?? 0;
-
-    if (index > cursor) {
-      tokens.push({
-        text: source.slice(cursor, index),
-        className: "text-slate-700",
-      });
-    }
-
-    tokens.push({
-      text: token,
-      className: getTokenClass(token, language, source, index),
-    });
-
-    cursor = index + token.length;
-  }
-
-  if (cursor < source.length) {
-    tokens.push({
-      text: source.slice(cursor),
-      className: "text-slate-700",
-    });
-  }
-
-  return tokens;
-}
-
-function CodePreview({
-  code,
-  language,
+function SidebarCard({
+  active,
+  label,
+  icon,
+  onClick,
 }: {
-  code: string;
-  language: CodeLanguage;
+  active: boolean;
+  label: string;
+  icon: ReactNode;
+  onClick: () => void;
 }) {
-  const tokens = tokenizeCode(code, language);
-
   return (
-    <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white">
-      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-        <div className="flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
-          <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-          <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-        </div>
-        <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-          {getLanguageLabel(language)}
-        </span>
-      </div>
+    <button
+      type="button"
+      onClick={onClick}
+      className={`group relative flex min-h-[122px] w-full flex-col items-center justify-center gap-2.5 px-2 py-3 text-center transition ${
+        active ? "text-white" : "text-white/62 hover:text-white"
+      }`}
+    >
+      <span
+        className={`relative flex h-12 w-12 items-center justify-center rounded-[18px] border shadow-[rgba(0,0,0,0.4)_0px_2px_4px,rgba(0,0,0,0.3)_0px_7px_13px_-3px,rgba(0,0,0,0.2)_0px_-3px_0px_inset] transition ${
+          active
+            ? "border-[#8a7dff]/55 bg-[linear-gradient(180deg,rgba(126,111,255,0.3),rgba(69,74,141,0.44))] text-[#88a6ff]"
+            : "border-white/10 bg-white/[0.05] text-white/52 group-hover:text-[#88a6ff]"
+        }`}
+      >
+        {icon}
+      </span>
+      <span className="relative text-[17px] font-medium">{label}</span>
+      {active && (
+        <span className="pointer-events-none absolute bottom-1 h-8 w-16 rounded-full bg-[#715cff]/28 blur-2xl" />
+      )}
+    </button>
+  );
+}
 
-      <pre className="overflow-x-auto px-4 py-4 font-mono text-sm leading-6">
-        {tokens.map((token, index) => (
-          <span key={`${index}-${token.text.slice(0, 12)}`} className={token.className}>
-            {token.text}
-          </span>
-        ))}
-      </pre>
+function StatCard({
+  icon,
+  value,
+  label,
+}: {
+  icon: ReactNode;
+  value: string;
+  label: string;
+}) {
+  return (
+    <div className="flex items-center gap-3 rounded-[18px] border border-white/8 bg-white/[0.03] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+      <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/8 bg-[#131834] text-[#7d93ff]">
+        {icon}
+      </span>
+      <span>
+        <span className="block text-xl font-semibold leading-none text-white">
+          {value}
+        </span>
+        <span className="mt-1 block text-xs text-white/48">{label}</span>
+      </span>
     </div>
   );
 }
 
-function LanguageSelect({
-  language,
-  onChange,
+function InlineStat({
+  icon,
+  value,
+  label,
 }: {
-  language: CodeLanguage;
-  onChange: (value: CodeLanguage) => void;
+  icon: ReactNode;
+  value: string;
+  label: string;
 }) {
   return (
-    <div className="relative w-full sm:w-auto">
-      <select
-        value={language}
-        onChange={(event) => onChange(event.target.value as CodeLanguage)}
-        className="w-full min-w-0 appearance-none rounded-full border border-slate-200 bg-white px-4 py-2.5 pr-10 text-sm font-medium text-slate-700 outline-none transition focus:border-sky-400 focus:ring-4 focus:ring-sky-100 sm:min-w-[170px]"
-      >
-        {CODE_LANGUAGE_OPTIONS.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+    <div className="flex items-center gap-3">
+      <span className="flex h-10 w-10 items-center justify-center rounded-[14px] border border-white/8 bg-[#131834] text-[#7d93ff] shadow-[rgba(0,0,0,0.32)_0px_2px_4px,rgba(0,0,0,0.24)_0px_7px_12px_-3px,rgba(0,0,0,0.2)_0px_-3px_0px_inset]">
+        {icon}
+      </span>
+      <span>
+        <span className="block text-[15px] font-semibold leading-none text-white">
+          {value}
+        </span>
+        <span className="mt-1 block text-xs text-white/48">{label}</span>
+      </span>
+    </div>
+  );
+}
 
-      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path
-            d="M3.25 5.5 7 9.25l3.75-3.75"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
+function GlowButton({
+  children,
+  onClick,
+  disabled,
+  variant = "primary",
+}: {
+  children: ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  variant?: "primary" | "secondary";
+}) {
+  const primary = variant === "primary";
+
+  return (
+    <div className="relative inline-flex">
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={disabled}
+        className={`relative z-10 inline-flex h-[50px] items-center justify-center rounded-[16px] px-6 text-base font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+          primary
+            ? "bg-[linear-gradient(90deg,#734dff_0%,#5d8fff_100%)] text-white hover:brightness-110"
+            : "border border-white/10 bg-white/[0.04] text-white hover:bg-white/[0.08]"
+        }`}
+      >
+        {children}
+      </button>
+      {primary && (
+        <div className="pointer-events-none absolute inset-x-6 bottom-[-10px] h-8 rounded-full bg-[linear-gradient(90deg,rgba(115,77,255,0.65),rgba(93,143,255,0.55))] blur-xl" />
+      )}
     </div>
   );
 }
 
 export default function SnapText() {
   const [mode, setMode] = useState<Mode>("send");
-  const [composerMode, setComposerMode] = useState<ShareContentType>("text");
   const [draft, setDraft] = useState("");
-  const [language, setLanguage] =
-    useState<CodeLanguage>(DEFAULT_CODE_LANGUAGE);
   const [shareCode, setShareCode] = useState("");
   const [sentShare, setSentShare] = useState<SentShareState | null>(null);
   const [sentDeliveryStatus, setSentDeliveryStatus] =
@@ -268,17 +211,13 @@ export default function SnapText() {
       setCountdownNow(Date.now());
     }, 1000);
 
-    return () => {
-      window.clearInterval(intervalId);
-    };
+    return () => window.clearInterval(intervalId);
   }, [sentShare]);
 
   useEffect(() => {
     if (!sentShare) {
       return;
     }
-
-    let cancelled = false;
 
     const checkStatus = async () => {
       try {
@@ -290,30 +229,16 @@ export default function SnapText() {
           return;
         }
 
-        const data = (await res.json()) as { status?: ShareDeliveryStatus };
-
-        if (
-          !cancelled &&
-          (data.status === "pending" ||
-            data.status === "received" ||
-            data.status === "expired")
-        ) {
-          setSentDeliveryStatus(data.status);
-        }
+        const data = (await res.json()) as { status: ShareDeliveryStatus };
+        setSentDeliveryStatus(data.status);
       } catch (statusError) {
         console.error(statusError);
       }
     };
 
     void checkStatus();
-    const intervalId = window.setInterval(() => {
-      void checkStatus();
-    }, 2000);
-
-    return () => {
-      cancelled = true;
-      window.clearInterval(intervalId);
-    };
+    const intervalId = window.setInterval(() => void checkStatus(), 2000);
+    return () => window.clearInterval(intervalId);
   }, [sentShare]);
 
   useEffect(() => {
@@ -325,51 +250,19 @@ export default function SnapText() {
       setShareCode("");
       setSentShare(null);
       setSentDeliveryStatus("pending");
-    }, 1400);
+    }, 1800);
 
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
+    return () => window.clearTimeout(timeoutId);
   }, [sentDeliveryStatus]);
 
   const secondsLeft = sentShare
     ? Math.max(0, Math.ceil((sentShare.expiresAt - countdownNow) / 1000))
     : SHARE_EXPIRY_SECONDS;
 
-  const isCodeShare = composerMode === "code";
-  const editorPlaceholder = isCodeShare
-    ? "Paste code..."
-    : "Paste text...";
-
-  const handleCopy = async (value: string, target: Exclude<CopyTarget, null>) => {
-    try {
-      await navigator.clipboard.writeText(value);
-      toast.success(target === "share-code" ? "Share code copied" : "Text copied");
-
-      if (target === "received-content" && receivedCode) {
-        const res = await fetch(`/api/receive/${receivedCode}`, {
-          method: "POST",
-        });
-
-        if (!res.ok) {
-          throw new Error("Unable to mark share as received");
-        }
-
-        setReceivedCode("");
-        setReceivedShare(null);
-      }
-
-      setCopiedTarget(target);
-      window.setTimeout(() => setCopiedTarget(null), 1500);
-    } catch (copyError) {
-      console.error(copyError);
-      setError("Unable to finish copy right now.");
-      toast.error("Unable to copy right now");
-    }
-  };
-
   const handleSend = async () => {
-    if (!draft.trim()) return;
+    if (!draft.trim()) {
+      return;
+    }
 
     setLoading(true);
     setError("");
@@ -383,14 +276,17 @@ export default function SnapText() {
         },
         body: JSON.stringify({
           text: draft,
-          contentType: composerMode,
-          language,
         }),
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as {
+        code?: string;
+        expiresAt?: number;
+        burnAfterReading?: boolean;
+        error?: string;
+      };
 
-      if (!res.ok) {
+      if (!res.ok || !data.code || typeof data.expiresAt !== "number") {
         throw new Error(data.error || "Unable to create share code");
       }
 
@@ -399,10 +295,8 @@ export default function SnapText() {
       setSentDeliveryStatus("pending");
       setSentShare({
         code: data.code,
-        contentType: data.contentType,
-        language: data.language,
         expiresAt: data.expiresAt,
-        burnAfterReading: data.burnAfterReading,
+        burnAfterReading: data.burnAfterReading ?? true,
       });
       setDraft("");
       toast.success("Share code created");
@@ -420,14 +314,16 @@ export default function SnapText() {
   };
 
   const handleFetch = async () => {
-    if (!inputCode.trim()) return;
+    if (!inputCode.trim()) {
+      return;
+    }
 
     setLoading(true);
     setError("");
 
     try {
       const res = await fetch(`/api/fetch/${inputCode.trim()}`);
-      const data = await res.json();
+      const data = (await res.json()) as StoredSharePayload & { error?: string };
 
       if (!res.ok) {
         throw new Error(data.error || "Unable to fetch share");
@@ -452,11 +348,41 @@ export default function SnapText() {
     }
   };
 
+  const handleCopy = async (value: string, target: Exclude<CopyTarget, null>) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      toast.success(
+        target === "access-code" ? "Access code copied" : "Text copied"
+      );
+
+      if (target === "received-content" && receivedCode) {
+        const res = await fetch(`/api/receive/${receivedCode}`, {
+          method: "POST",
+        });
+
+        if (!res.ok) {
+          throw new Error("Unable to mark share as received");
+        }
+
+        setReceivedCode("");
+        setReceivedShare(null);
+      }
+
+      setCopiedTarget(target);
+      window.setTimeout(() => setCopiedTarget(null), 1500);
+    } catch (copyError) {
+      console.error(copyError);
+      setError("Unable to finish copy right now.");
+      toast.error("Unable to copy right now");
+    }
+  };
+
   const resetShareState = () => {
     setShareCode("");
     setSentShare(null);
     setSentDeliveryStatus("pending");
     setError("");
+    setCopiedTarget(null);
   };
 
   const handleComposerKeyDown = (
@@ -466,21 +392,7 @@ export default function SnapText() {
       return;
     }
 
-    if (
-      composerMode === "text" &&
-      event.key === "Enter" &&
-      !event.shiftKey
-    ) {
-      event.preventDefault();
-      void handleSend();
-      return;
-    }
-
-    if (
-      composerMode === "code" &&
-      event.key === "Enter" &&
-      (event.ctrlKey || event.metaKey)
-    ) {
+    if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       void handleSend();
     }
@@ -495,275 +407,305 @@ export default function SnapText() {
     }
   };
 
+  const countdownLabel =
+    sentDeliveryStatus === "received"
+      ? "Opened"
+      : sentDeliveryStatus === "expired"
+        ? "Expired"
+        : formatCountdown(secondsLeft);
+
   return (
-    <div className="px-3 pb-6 pt-24 sm:px-6 sm:pb-8 sm:pt-28 md:pb-10 md:pt-32">
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-5 text-center sm:mb-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.34em] text-sky-700">
+    <section className="relative min-h-screen overflow-hidden bg-[#050816] px-4 pb-6 pt-36 text-white sm:px-6 sm:pt-40">
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(100,76,255,0.16),transparent_22%),radial-gradient(circle_at_50%_72%,rgba(112,84,255,0.1),transparent_20%)]" />
+        <div className="absolute inset-0 opacity-55 [background-image:radial-gradient(circle_at_2px_2px,rgba(255,255,255,0.07)_1px,transparent_0)] [background-size:30px_30px]" />
+      </div>
+
+      <div className="relative mx-auto max-w-7xl">
+        <div className="mx-auto max-w-3xl text-center">
+          <span className="inline-flex rounded-[12px] border border-white/8 bg-white/[0.03] px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.42em] text-[#7d93ff] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
             SNAPTEXT
-          </p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl md:text-5xl">
-            Share text and code
+          </span>
+          <h1 className="font-display mt-8 text-5xl font-semibold tracking-tight text-white sm:text-6xl">
+            Share{" "}
+            <span className="bg-[linear-gradient(90deg,#8e73ff_10%,#5a87ff_95%)] bg-clip-text text-transparent">
+              Text
+            </span>
           </h1>
+          <p className="mx-auto mt-5 max-w-2xl text-xl text-white/60">
+            Instantly share text with a short, secure link.
+          </p>
         </div>
 
-        <div className="rounded-[1.75rem] border border-white/80 bg-white/80 p-3 shadow-[0_30px_90px_-50px_rgba(15,23,42,0.45)] backdrop-blur-xl sm:rounded-[2rem] sm:p-5 md:p-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="inline-flex rounded-full border border-slate-200 bg-slate-100/80 p-1">
-              <button
-                onClick={() => {
-                  setMode("send");
-                  setError("");
-                }}
-                className={`rounded-full px-5 py-2 text-sm font-medium transition ${
-                  mode === "send"
-                    ? "bg-slate-950 text-white shadow"
-                    : "text-slate-600 hover:text-slate-950"
-                }`}
-              >
-                Send
-              </button>
-              <button
-                onClick={() => {
-                  setMode("receive");
-                  setError("");
-                }}
-                className={`rounded-full px-5 py-2 text-sm font-medium transition ${
-                  mode === "receive"
-                    ? "bg-slate-950 text-white shadow"
-                    : "text-slate-600 hover:text-slate-950"
-                }`}
-              >
-                Receive
-              </button>
-            </div>
+        <div className="relative mx-auto mt-16 max-w-[1045px]">
+          <div className="pointer-events-none absolute inset-x-14 top-1/2 h-[320px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(108,86,255,0.24),rgba(108,86,255,0.08)_42%,transparent_74%)] blur-3xl" />
+          <div className="pointer-events-none absolute inset-x-28 top-[-42px] h-20 rounded-full bg-[radial-gradient(circle,rgba(118,92,255,0.4),transparent_72%)] blur-2xl" />
+          <div className="pointer-events-none absolute inset-x-24 bottom-[-52px] h-24 rounded-full bg-[radial-gradient(circle,rgba(92,124,255,0.32),transparent_74%)] blur-3xl" />
 
-            {sentShare && mode === "send" && (
-              <div className="rounded-full border border-sky-100 bg-sky-50 px-4 py-2 text-sm font-medium text-sky-800">
-                {sentDeliveryStatus === "received"
-                  ? "Received"
-                  : sentDeliveryStatus === "expired"
-                    ? "Expired"
-                    : formatCountdown(secondsLeft)}
+          <div
+            id="share-workspace"
+            className="relative overflow-hidden rounded-[34px] border border-[#2f2758] bg-[linear-gradient(180deg,rgba(18,21,45,0.97)_0%,rgba(11,15,33,0.98)_100%)] shadow-[0_35px_80px_-45px_rgba(0,0,0,1)]"
+          >
+            <div className="pointer-events-none absolute inset-x-16 top-0 h-px bg-gradient-to-r from-transparent via-[#7c61ff] to-transparent opacity-85" />
+            <div className="pointer-events-none absolute inset-x-16 bottom-0 h-px bg-gradient-to-r from-transparent via-[#6a86ff] to-transparent opacity-75" />
+
+            <div className="grid lg:grid-cols-[120px_minmax(0,1fr)]">
+              <aside className="border-b border-white/6 p-5 lg:border-b-0 lg:border-r lg:border-white/6">
+                <SidebarCard
+                  active={mode === "send"}
+                  label="Send"
+                  onClick={() => {
+                    setMode("send");
+                    setError("");
+                  }}
+                  icon={<PenLine className="h-5 w-5" strokeWidth={1.8} />}
+                />
+                <div className="h-1.5" />
+                <SidebarCard
+                  active={mode === "receive"}
+                  label="Receive"
+                  onClick={() => {
+                    setMode("receive");
+                    setError("");
+                  }}
+                  icon={<Download className="h-5 w-5" strokeWidth={1.8} />}
+                />
+              </aside>
+
+              <div className="relative p-6 sm:p-8 lg:px-8 lg:py-7">
+                {error && (
+                  <div className="mb-5 rounded-2xl border border-rose-400/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">
+                    {error}
+                  </div>
+                )}
+
+                {mode === "send" && !sentShare && (
+                  <>
+                    <div className="flex items-center justify-between text-[15px] font-medium text-white/76">
+                      <span className="text-white/72">Paste your text here...</span>
+                      <span className="text-white/68">
+                        {draft.length.toLocaleString()} /{" "}
+                        {SHARE_TEXT_MAX_CHARACTERS.toLocaleString()}
+                      </span>
+                    </div>
+
+                    <div className="mt-7 overflow-hidden rounded-[24px] border border-white/8 bg-[#171b35] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+                      <textarea
+                        value={draft}
+                        onChange={(event) =>
+                          setDraft(
+                            event.target.value.slice(
+                              0,
+                              SHARE_TEXT_MAX_CHARACTERS
+                            )
+                          )
+                        }
+                        onKeyDown={handleComposerKeyDown}
+                        placeholder="Paste your text here..."
+                        spellCheck
+                        maxLength={SHARE_TEXT_MAX_CHARACTERS}
+                        className="h-[205px] w-full resize-none bg-transparent px-5 py-5 text-[17px] leading-8 text-white outline-none placeholder:text-white/30 sm:h-[230px]"
+                      />
+                    </div>
+
+                    <div className="mt-7 flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+                      <div className="flex flex-wrap items-center gap-4 text-white/60">
+                        <InlineStat
+                          icon={<FileText className="h-4 w-4" strokeWidth={1.8} />}
+                          value={draft.length.toString()}
+                          label="characters"
+                        />
+                        <span className="hidden h-10 w-px bg-white/10 sm:block" />
+                        <InlineStat
+                          icon={<Clock3 className="h-4 w-4" strokeWidth={1.8} />}
+                          value="5"
+                          label="min read"
+                        />
+                      </div>
+
+                      <GlowButton
+                        onClick={handleSend}
+                        disabled={loading || !draft.trim()}
+                      >
+                        <span className="inline-flex items-center gap-3 text-lg">
+                          <span>{loading ? "Creating..." : "Create Link"}</span>
+                          <ArrowRight className="h-[19px] w-[19px]" strokeWidth={2} />
+                        </span>
+                      </GlowButton>
+                    </div>
+                  </>
+                )}
+
+                {mode === "send" && sentShare && (
+                  <div className="flex h-full flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-4">
+                        <span className="text-[15px] font-medium text-white/76">
+                          Access code ready
+                        </span>
+                        <span className="text-[15px] text-white/68">
+                          {countdownLabel}
+                        </span>
+                      </div>
+
+                      <div className="mt-7 rounded-[24px] border border-white/8 bg-[#171b35] px-5 py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+                        <p className="text-sm text-white/48">
+                          Send this code to the other device.
+                        </p>
+                        <div className="mt-5 break-all font-mono text-5xl tracking-[0.3em] text-white">
+                          {shareCode}
+                        </div>
+                      </div>
+
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <span className="rounded-full border border-white/8 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-white/62">
+                          Text share
+                        </span>
+                        <span className="rounded-full border border-white/8 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-white/62">
+                          {sentShare.burnAfterReading
+                            ? "Burn after read"
+                            : "Reusable"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <StatCard
+                          icon={<Clock3 className="h-4 w-4" strokeWidth={1.8} />}
+                          value={formatCountdown(secondsLeft)}
+                          label="remaining"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-3 sm:flex-row">
+                        <GlowButton
+                          variant="secondary"
+                          onClick={() => handleCopy(shareCode, "access-code")}
+                        >
+                          {copiedTarget === "access-code"
+                            ? "Copied"
+                            : "Copy code"}
+                        </GlowButton>
+                        <GlowButton onClick={resetShareState}>New Share</GlowButton>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {mode === "receive" && (
+                  <>
+                    <div className="flex items-center justify-between text-[15px] font-medium text-white/76">
+                      <span className="text-white/72">Enter your access code</span>
+                      <span className="text-white/68">6 digits</span>
+                    </div>
+
+                    <div className="mt-7 flex flex-col gap-5 xl:flex-row xl:items-start">
+                      <input
+                        value={inputCode}
+                        onChange={(event) =>
+                          setInputCode(
+                            event.target.value.replace(/\D/g, "").slice(0, 6)
+                          )
+                        }
+                        onKeyDown={handleReceiveInputKeyDown}
+                        placeholder="000000"
+                        inputMode="numeric"
+                        className="h-[58px] w-full rounded-[18px] border border-white/8 bg-[#171b35] px-5 text-center font-mono text-2xl tracking-[0.32em] text-white outline-none transition placeholder:text-white/26 focus:border-[#705cff]"
+                      />
+
+                      <GlowButton
+                        onClick={handleFetch}
+                        disabled={loading || inputCode.trim().length !== 6}
+                      >
+                        <span className="inline-flex items-center gap-3">
+                          <span>{loading ? "Opening..." : "Open Link"}</span>
+                        </span>
+                      </GlowButton>
+                    </div>
+
+                    {!receivedShare && (
+                      <div className="mt-7 rounded-[24px] border border-dashed border-white/10 bg-[#171b35]/55 px-5 py-10 text-center text-white/48">
+                        Enter the six-digit code to reveal the text.
+                      </div>
+                    )}
+
+                    {receivedShare && (
+                      <div className="mt-7">
+                        <div className="rounded-[24px] border border-white/8 bg-[#171b35] px-5 py-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+                          <div className="mb-4 flex flex-wrap gap-2">
+                            <span className="rounded-full border border-white/8 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-white/62">
+                              One-time reveal
+                            </span>
+                            <span className="rounded-full border border-white/8 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-white/62">
+                              Copy to burn
+                            </span>
+                          </div>
+
+                          <div className="rounded-[20px] border border-white/8 bg-[#11152d] p-4 text-[16px] leading-8 whitespace-pre-wrap text-white/78">
+                            {receivedShare.text}
+                          </div>
+                        </div>
+
+                        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+                          <GlowButton
+                            variant="secondary"
+                            onClick={() =>
+                              handleCopy(
+                                receivedShare.text,
+                                "received-content"
+                              )
+                            }
+                          >
+                            {copiedTarget === "received-content"
+                              ? "Copied"
+                              : "Copy & Burn"}
+                          </GlowButton>
+                          <GlowButton
+                            onClick={() => {
+                              setReceivedCode("");
+                              setReceivedShare(null);
+                              setError("");
+                            }}
+                          >
+                            Close
+                          </GlowButton>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
-            )}
+            </div>
           </div>
+        </div>
 
-          {error && (
-            <div className="mt-4 rounded-[1.25rem] border border-rose-200 bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-700">
-              {error}
-            </div>
-          )}
-
-          {mode === "send" && !sentShare && (
-            <div className="mt-5">
-              <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                <div className="inline-flex rounded-full border border-slate-200 bg-white p-1">
-                  <button
-                    onClick={() => setComposerMode("text")}
-                    className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                      composerMode === "text"
-                        ? "bg-slate-950 text-white"
-                        : "text-slate-600 hover:text-slate-950"
-                    }`}
-                  >
-                    Text
-                  </button>
-                  <button
-                    onClick={() => {
-                      setComposerMode("code");
-                      if (language === DEFAULT_CODE_LANGUAGE) {
-                        setLanguage("typescript");
-                      }
-                    }}
-                    className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                      composerMode === "code"
-                        ? "bg-slate-950 text-white"
-                        : "text-slate-600 hover:text-slate-950"
-                    }`}
-                  >
-                    Code
-                  </button>
-                </div>
-
-                {isCodeShare && (
-                  <LanguageSelect language={language} onChange={setLanguage} />
-                )}
+        <div className="relative mx-auto mt-16 max-w-[1045px]">
+          <div className="pointer-events-none absolute left-1/2 top-0 h-28 w-52 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(113,92,255,0.24),transparent_72%)] blur-3xl" />
+          <div className="grid gap-10 md:grid-cols-3">
+            {featureCards.map((feature, index) => (
+              <div
+                key={feature.title}
+                className={`px-5 text-center md:px-8 ${
+                  index < featureCards.length - 1
+                    ? "md:border-r md:border-white/8"
+                    : ""
+                }`}
+              >
+                <span className="mx-auto flex h-[58px] w-[58px] items-center justify-center rounded-[20px] border border-white/8 bg-[linear-gradient(180deg,rgba(109,95,255,0.16),rgba(39,43,90,0.14))] text-[#7d93ff] shadow-[0_18px_40px_-26px_rgba(113,92,255,0.9)]">
+                  {feature.icon}
+                </span>
+                <h3 className="mt-6 text-[30px] font-semibold tracking-tight text-white sm:text-[32px] md:text-[20px]">
+                  {feature.title}
+                </h3>
+                <p className="mx-auto mt-4 max-w-[240px] text-base leading-8 text-white/52 md:text-[15px] md:leading-7">
+                  {feature.description}
+                </p>
               </div>
-
-              <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white">
-                {isCodeShare && (
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
-                      <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-                      <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-                    </div>
-                    <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-                      {getLanguageLabel(language)}
-                    </span>
-                  </div>
-                )}
-
-                <textarea
-                  value={draft}
-                  onChange={(event) => setDraft(event.target.value)}
-                  onKeyDown={handleComposerKeyDown}
-                  placeholder={editorPlaceholder}
-                  spellCheck={!isCodeShare}
-                  className={`w-full resize-none bg-white px-4 py-4 outline-none placeholder:text-slate-400 ${
-                    isCodeShare
-                      ? "h-64 font-mono text-sm leading-6 text-slate-800 sm:h-72"
-                      : "h-52 text-sm leading-7 text-slate-800 sm:h-56 sm:text-base"
-                  }`}
-                />
-              </div>
-
-              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-slate-500">
-                  <span>{draft.length} chars</span>
-                  <span className="h-1 w-1 rounded-full bg-slate-300" />
-                  <span>5 min</span>
-                </div>
-
-                <button
-                  onClick={handleSend}
-                  disabled={loading}
-                  className="w-full rounded-2xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
-                >
-                  {loading
-                    ? "Creating..."
-                    : isCodeShare
-                      ? "Share code"
-                      : "Share text"}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {mode === "send" && sentShare && (
-            <div className="mt-5 rounded-[1.5rem] border border-sky-100 bg-sky-50/80 p-5">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700">
-                    Share Code
-                  </p>
-                  <div className="mt-2 break-all font-mono text-3xl tracking-[0.2em] text-slate-950 sm:text-4xl sm:tracking-[0.28em] md:text-5xl">
-                    {shareCode}
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-600">
-                    {sentShare.contentType === "code" ? "Code" : "Text"}
-                  </span>
-                  <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-600">
-                    {getLanguageLabel(sentShare.language)}
-                  </span>
-                  <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-600">
-                    {formatCountdown(secondsLeft)}
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-                <button
-                  onClick={() => handleCopy(shareCode, "share-code")}
-                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 sm:w-auto"
-                >
-                  {copiedTarget === "share-code" ? "Copied" : "Copy code"}
-                </button>
-                <button
-                  onClick={resetShareState}
-                  className="w-full rounded-2xl bg-slate-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-slate-800 sm:w-auto"
-                >
-                  New share
-                </button>
-              </div>
-            </div>
-          )}
-
-          {mode === "receive" && (
-            <div className="mt-5">
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <input
-                  value={inputCode}
-                  onChange={(event) =>
-                    setInputCode(
-                      event.target.value.replace(/\D/g, "").slice(0, 6)
-                    )
-                  }
-                  onKeyDown={handleReceiveInputKeyDown}
-                  placeholder="Enter code"
-                  inputMode="numeric"
-                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-center font-mono text-lg tracking-[0.24em] text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
-                />
-
-                <button
-                  onClick={handleFetch}
-                  disabled={loading}
-                  className="w-full rounded-2xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
-                >
-                  {loading ? "Opening..." : "Open"}
-                </button>
-              </div>
-
-              {receivedShare && (
-                <div className="mt-5 rounded-[1.5rem] border border-slate-200 bg-slate-50/70 p-4">
-                  <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-                    <div className="flex flex-wrap gap-2">
-                      <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-600">
-                        {receivedShare.contentType === "code" ? "Code" : "Text"}
-                      </span>
-                      <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-600">
-                        {getLanguageLabel(receivedShare.language)}
-                      </span>
-                    </div>
-
-                    <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
-                      Copy to burn
-                    </span>
-                  </div>
-
-                  {receivedShare.contentType === "code" ? (
-                    <CodePreview
-                      code={receivedShare.text}
-                      language={receivedShare.language}
-                    />
-                  ) : (
-                    <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4 text-sm leading-7 whitespace-pre-wrap text-slate-700">
-                      {receivedShare.text}
-                    </div>
-                  )}
-
-                  <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-                    <button
-                      onClick={() =>
-                        handleCopy(receivedShare.text, "received-content")
-                      }
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 sm:w-auto"
-                    >
-                      {copiedTarget === "received-content"
-                        ? "Copied"
-                        : "Copy"}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setReceivedCode("");
-                        setReceivedShare(null);
-                        setError("");
-                      }}
-                      className="w-full rounded-2xl bg-slate-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-slate-800 sm:w-auto"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

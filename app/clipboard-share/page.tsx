@@ -5,12 +5,13 @@ export const metadata: Metadata = {
   title: "Clipboard Share - Share Clipboard Content Securely | SnapText",
   description:
     "Share clipboard content instantly with temporary links. Paste text, get a shareable link, and keep your clipboard private. Free and secure.",
-  alternates: { canonical: "https://send-anywhere-text.com/clipboard-share"}, keywords:
+  alternates: { canonical: "https://send-anywhere-text.com/clipboard-share" },
+  keywords:
     "clipboard share, share clipboard, clipboard sharing, share text from clipboard, clipboard transfer, share copied text",
 };
 
 const content = `
-<p>Share your <strong>clipboard</strong> content securely with SnapText. Copy text, paste it into SnapText, get a temporary link. No clipboard history on servers—just one-time sharing.</p>
+<p>Share your <strong>clipboard</strong> content securely with SnapText. Copy text, paste it into SnapText, and get a temporary link. No clipboard history on servers - just one-time sharing.</p>
 
 <h2>What is Clipboard Sharing?</h2>
 <p>Clipboard sharing lets you send copied text to someone else via a temporary link. Instead of pasting into a chat that logs everything, share via a disposable link that self-destructs.</p>
@@ -22,43 +23,43 @@ const content = `
 <li>Paste into SnapText</li>
 <li>Click to generate a share link</li>
 <li>Share the link with anyone</li>
-<li>Recipient views once, then it's deleted</li>
+<li>Recipient views once, then it is deleted</li>
 </ol>
 
 <h2>Why Share Clipboard Content?</h2>
 <h3>Privacy Over Chat Apps</h3>
 <p>Chat apps save everything to servers, archives, and backups. Clipboard sharing via SnapText leaves no permanent record.</p>
 
-<h3>Code Preservation</h3>
-<p>Copy code from your editor, paste into SnapText, share. Indentation, formatting, special characters—all preserved.</p>
+<h3>Multi-Line Text Preservation</h3>
+<p>Copy structured text from your terminal, editor, or browser, paste into SnapText, and share it without turning it into a messy chat thread.</p>
 
 <h3>Large Text</h3>
-<p>Some chat apps have limits. SnapText handles large text blocks without issue. Share entire documents, logs, or code files.</p>
+<p>Some chat apps have limits. SnapText handles large text blocks without issue. Share entire documents, logs, or copied notes.</p>
 
 <h3>Cleaner Communication</h3>
-<p>No more message threading with giant text blocks. Share a link instead—clean, professional, and temporary.</p>
+<p>No more message threading with giant text blocks. Share a link instead - clean, professional, and temporary.</p>
 
 <h2>Clipboard Share Use Cases</h2>
 <h3>Password Sharing</h3>
-<p>Copy a password, share via SnapText, password is deleted after viewing. Clean clipboard, no trace.</p>
+<p>Copy a password, share via SnapText, and let it disappear after viewing.</p>
 
-<h3>Code Snippet Distribution</h3>
-<p>Copy code from VS Code, paste into SnapText, share with teammates. Perfect formatting every time.</p>
+<h3>Instruction Distribution</h3>
+<p>Copy setup steps or short operating notes, paste into SnapText, and share them with teammates without leaving a permanent record.</p>
 
 <h3>Error Log Sharing</h3>
-<p>Copy error logs from terminal or logs, share via link for quick technical support.</p>
+<p>Copy error logs from your terminal or logs page, then share them via link for quick technical support.</p>
 
 <h3>Configuration Sharing</h3>
-<p>Share config files, .env contents, JSON snippets—all via clipboard to shareable link.</p>
+<p>Share copied settings, environment values, or JSON text through a temporary link.</p>
 
 <h3>Long URLs</h3>
-<p>Copy long URLs, share via short SnapText link. Recipients get the URL in a clean format.</p>
+<p>Copy long URLs and share them via a shorter SnapText handoff when direct pasting is inconvenient.</p>
 
 <h2>Clipboard Share vs Email</h2>
 <ul>
 <li><strong>No inbox clutter:</strong> Links instead of messages</li>
 <li><strong>No subject lines:</strong> Just paste and share</li>
-<li><strong>No archiving:</strong> Messages don't persist</li>
+<li><strong>No archiving:</strong> Messages do not persist</li>
 <li><strong>No character limits:</strong> Large text works fine</li>
 </ul>
 
@@ -67,7 +68,7 @@ const content = `
 <ul>
 <li><strong>No account needed:</strong> SnapText works without registration</li>
 <li><strong>Burn after reading:</strong> Many tools store indefinitely</li>
-<li><strong>No analytics:</strong> We don't track your pastes</li>
+<li><strong>No analytics:</strong> We do not track your pastes</li>
 <li><strong>No limits:</strong> Free to use without restrictions</li>
 </ul>
 
@@ -76,13 +77,12 @@ const content = `
 <li><strong>One-time links:</strong> Work only once</li>
 <li><strong>Automatic deletion:</strong> After viewing</li>
 <li><strong>No server storage:</strong> Text deleted immediately</li>
-<li><strong>No logs:</strong> We don't track shares</li>
+<li><strong>No logs:</strong> We do not track shares</li>
 <li><strong>Encrypted:</strong> All transfers protected</li>
 </ul>
 
 <h2>Clipboard Share for Teams</h2>
 <ul>
-<li>Share code reviews</li>
 <li>Distribute error details</li>
 <li>Exchange configuration</li>
 <li>Send meeting notes</li>
@@ -92,10 +92,9 @@ const content = `
 <h2>Clipboard Share for Developers</h2>
 <ul>
 <li>Share git commands</li>
-<li>Distribute code snippets</li>
 <li>Share error stacks</li>
 <li>Exchange API keys</li>
-<li>Send config files</li>
+<li>Send config text</li>
 </ul>
 
 <h2>Clipboard Share Best Practices</h2>
@@ -107,7 +106,7 @@ const content = `
 </ul>
 
 <h2>Try Clipboard Share</h2>
-<p>Next time you need to share copied text, skip the chat app. Paste into SnapText and share a temporary link. Clipboard sharing made simple, secure, and ephemeral.</p>
+<p>Next time you need to share copied text, skip the chat app. Paste into SnapText and share a temporary link. Clipboard sharing made simple, secure, and temporary.</p>
 `;
 
 const relatedLinks = [

@@ -73,7 +73,7 @@ export default function OcrWorkspace() {
   const [resultText, setResultText] = useState("");
   const [confidence, setConfidence] = useState<number | null>(null);
   const [aiEnhanced, setAiEnhanced] = useState(false);
-  const [ocrStatus, setOcrStatus] = useState("Idle");
+  const [, setOcrStatus] = useState("Idle");
   const [ocrProgress, setOcrProgress] = useState<number | null>(null);
   const [history, setHistory] = useState<OcrHistoryItem[]>(() => {
     if (typeof window === "undefined") {
@@ -224,24 +224,33 @@ export default function OcrWorkspace() {
   };
 
   return (
-    <div className="bg-white px-3 pb-8 pt-24 text-slate-950 sm:px-6 sm:pt-28 md:pt-32">
-      <div className="mx-auto max-w-6xl">
+    <div className="relative overflow-hidden bg-[#050816] px-3 pb-10 pt-28 text-white sm:px-6 sm:pt-32 md:pt-36">
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_14%,rgba(100,76,255,0.16),transparent_22%),radial-gradient(circle_at_50%_68%,rgba(112,84,255,0.1),transparent_20%)]" />
+        <div className="absolute inset-0 opacity-55 [background-image:radial-gradient(circle_at_2px_2px,rgba(255,255,255,0.07)_1px,transparent_0)] [background-size:30px_30px]" />
+      </div>
+
+      <div className="relative mx-auto max-w-6xl">
         <div className="mb-5 text-center sm:mb-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.34em] text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[#7d93ff]">
             IMAGE TO TEXT
           </p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl md:text-5xl">
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl md:text-5xl">
             Extract text from any crop
           </h1>
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-white/58 sm:text-lg">
+            Upload, crop, and copy text inside the same visual system as the rest
+            of SnapText.
+          </p>
         </div>
 
-        <div className="rounded-[1.75rem] border border-slate-200 bg-white p-3 shadow-[0_24px_80px_-60px_rgba(15,23,42,0.45)] sm:rounded-[2rem] sm:p-5 md:p-6">
+        <div className="rounded-[2rem] border border-[#2f2758] bg-[linear-gradient(180deg,rgba(18,21,45,0.97)_0%,rgba(11,15,33,0.98)_100%)] p-3 shadow-[0_35px_80px_-45px_rgba(0,0,0,1)] sm:rounded-[2.2rem] sm:p-5 md:p-6">
           <ImageDropzone onFile={handleFile} disabled={isLoading} />
 
           {imageUrl && (
             <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)]">
               <section>
-                <div className="relative h-[420px] overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 sm:h-[520px]">
+                <div className="relative h-[420px] overflow-hidden rounded-[1.6rem] border border-white/10 bg-[#0c1126] sm:h-[520px]">
                   <Cropper
                     image={imageUrl}
                     crop={crop}
@@ -260,10 +269,10 @@ export default function OcrWorkspace() {
                   />
                 </div>
 
-                <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center">
+                <div className="mt-4 flex flex-col gap-3 rounded-[1.6rem] border border-white/10 bg-white/[0.03] p-4 sm:flex-row sm:items-center">
                   <label
                     htmlFor="zoom"
-                    className="text-sm font-semibold text-slate-700"
+                    className="text-sm font-semibold text-white/76"
                   >
                     Zoom
                   </label>
@@ -283,7 +292,7 @@ export default function OcrWorkspace() {
                       setCrop({ x: 0, y: 0 });
                       setZoom(1);
                     }}
-                    className="rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                    className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-semibold text-white/78 transition hover:bg-white/[0.08]"
                   >
                     Reset
                   </button>
@@ -291,37 +300,37 @@ export default function OcrWorkspace() {
                     type="button"
                     disabled={isLoading}
                     onClick={() => void generateText()}
-                    className="rounded-2xl bg-sky-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-70"
+                    className="rounded-2xl bg-[linear-gradient(90deg,#734dff_0%,#5d8fff_100%)] px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
                   >
                     {isLoading ? "Generating..." : "Generate text"}
                   </button>
                 </div>
               </section>
 
-              <aside className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <aside className="rounded-[1.6rem] border border-white/10 bg-[rgba(10,14,31,0.9)] p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
-                  <h2 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
+                  <h2 className="text-sm font-semibold uppercase tracking-[0.24em] text-[#7d93ff]">
                     Extracted Text
                   </h2>
                   {confidence !== null && (
-                    <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600">
+                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-semibold text-white/72">
                       {confidence}% confidence
                     </span>
                   )}
                   {aiEnhanced && (
-                    <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600">
+                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-semibold text-white/72">
                       AI refined
                     </span>
                   )}
                 </div>
 
-                <div className="mb-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600">
+                <div className="mb-3 rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-medium text-white/58">
                   {isLoading && ocrProgress !== null ? ` (${ocrProgress}%)` : ""}
                 </div>
 
-                <div className="min-h-72 rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-7 whitespace-pre-wrap text-slate-800">
+                <div className="min-h-72 rounded-2xl border border-white/10 bg-[#11152d] p-4 text-sm leading-7 whitespace-pre-wrap text-white/78">
                   {resultText || (
-                    <span className="text-slate-400">
+                    <span className="text-white/34">
                       Drag the crop handles over text, then generate.
                     </span>
                   )}
@@ -331,7 +340,7 @@ export default function OcrWorkspace() {
                   <button
                     type="button"
                     onClick={() => void copyResult()}
-                    className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                    className="rounded-2xl bg-[linear-gradient(90deg,#734dff_0%,#5d8fff_100%)] px-4 py-3 text-sm font-semibold text-white transition hover:brightness-110"
                   >
                     Copy text
                   </button>
@@ -343,7 +352,7 @@ export default function OcrWorkspace() {
                       setAiEnhanced(false);
                       toast.success("Result cleared");
                     }}
-                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                    className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-semibold text-white/78 transition hover:bg-white/[0.08]"
                   >
                     Clear
                   </button>

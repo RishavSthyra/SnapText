@@ -86,16 +86,16 @@ export default function ContactPage() {
 
       <div className="mx-auto mt-14 w-full max-w-[1320px] px-4 sm:mt-16 sm:px-6 lg:mt-20 lg:px-8">
         <section className="py-4">
-          <div className="grid gap-10 border-y border-white/60 py-8 md:grid-cols-3">
+          <div className="grid gap-10 rounded-[2.25rem] border border-white/10 bg-[linear-gradient(180deg,rgba(18,21,45,0.97)_0%,rgba(11,15,33,0.98)_100%)] px-6 py-8 text-white shadow-[0_35px_80px_-45px_rgba(0,0,0,1)] md:grid-cols-3 lg:px-8">
             {channels.map((channel) => (
               <div key={channel.title}>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700">
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7d93ff]">
                   {channel.title}
                 </p>
-                <p className="mt-3 text-xl font-semibold text-slate-950">
+                <p className="mt-3 text-xl font-semibold text-white">
                   {channel.detail}
                 </p>
-                <p className="mt-3 text-sm leading-8 text-slate-600 sm:text-base">
+                <p className="mt-3 text-sm leading-8 text-white/64 sm:text-base">
                   {channel.description}
                 </p>
               </div>
@@ -103,23 +103,23 @@ export default function ContactPage() {
           </div>
         </section>
 
-        <section className="mt-16 rounded-[2.4rem] bg-white px-6 py-8 shadow-[0_30px_90px_-60px_rgba(15,23,42,0.24)] sm:px-8 sm:py-10 lg:px-10 lg:py-12">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-700">
+        <section className="mt-16 rounded-[2.4rem] border border-white/10 bg-[rgba(10,14,31,0.9)] px-6 py-8 text-white shadow-[0_35px_80px_-45px_rgba(0,0,0,1)] sm:px-8 sm:py-10 lg:px-10 lg:py-12">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#7d93ff]">
             FAQ
           </p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
+          <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
             Common questions about support, privacy, and communication.
           </h2>
-          <div className="mt-8 divide-y divide-slate-200">
+          <div className="mt-8 divide-y divide-white/10">
             {faq.map((item) => (
               <details key={item.question} className="group py-5">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-lg font-semibold text-slate-950">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-lg font-semibold text-white">
                   <span>{item.question}</span>
-                  <span className="text-2xl font-light text-slate-400 transition group-open:rotate-45">
+                  <span className="text-2xl font-light text-white/42 transition group-open:rotate-45">
                     +
                   </span>
                 </summary>
-                <p className="mt-3 max-w-3xl text-sm leading-8 text-slate-600 sm:text-base">
+                <p className="mt-3 max-w-3xl text-sm leading-8 text-white/64 sm:text-base">
                   {item.answer}
                 </p>
               </details>

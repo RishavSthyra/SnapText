@@ -4,13 +4,13 @@ import SeoPage from "@/components/SeoPage";
 export const metadata: Metadata = {
   title: "Send Text - Instant Text Sharing Tool | SnapText",
   description:
-    "Send text instantly with short-lived burn-after-reading codes. Share text and code snippets securely without signup. Perfect for sharing sensitive information.",
+    "Send text instantly with short-lived burn-after-reading codes. Share text securely without signup. Perfect for sharing sensitive information.",
   alternates: { canonical: "https://send-anywhere-text.com/send-text"}, keywords:
     "send text, text sharing, instant text, share text online, burn after reading, ephemeral text, temporary text message, text link, anonymous text",
 };
 
 const content = `
-<p>Need to <strong>send text</strong> quickly and securely? SnapText lets you share text messages, code snippets, and sensitive information with temporary links that self-destruct after reading. No signup required, completely free.</p>
+<p>Need to <strong>send text</strong> quickly and securely? SnapText lets you share text messages and sensitive information with temporary links that self-destruct after reading. No signup required, completely free.</p>
 
 <h2>How to Send Text Instantly</h2>
 <p>Our text sharing service makes it incredibly simple to <strong>send text</strong> to anyone:</p>
@@ -27,7 +27,6 @@ const content = `
 <li><strong>Burn After Reading:</strong> Messages are deleted permanently after being viewed once.</li>
 <li><strong>No Signup:</strong> Start sending text immediately without registration.</li>
 <li><strong>Secure:</strong> End-to-end encryption ensures your text stays private.</li>
-<li><strong>Code-Friendly:</strong> Perfect for sharing code snippets with proper formatting.</li>
 <li><strong>Short Links:</strong> Easy to share via chat, email, or any platform.</li>
 <li><strong>Time-Limited:</strong> Links expire automatically after 24 hours if never viewed.</li>
 </ul>
@@ -36,8 +35,8 @@ const content = `
 <h3>Share Passwords Securely</h3>
 <p>Need to share a password with a colleague or friend? Instead of typing it in a chat that gets logged, use SnapText to send text securely. The password will be available once and then gone forever.</p>
 
-<h3>Code Reviews and Snippets</h3>
-<p>Developers constantly need to share code. SnapText preserves indentation and formatting, making it perfect for sharing code snippets, configuration files, or error messages.</p>
+<h3>Operational Notes and Logs</h3>
+<p>Teams often need to share setup instructions, copied terminal output, or short notes without leaving them behind in chat history. SnapText keeps that handoff simple and temporary.</p>
 
 <h3>Sensitive Information</h3>
 <p>Share personal information, API keys, or confidential data safely. Once the recipient views the text, it's permanently erased—no traces left behind.</p>
@@ -54,7 +53,6 @@ const content = `
 <tr><td>No signup required</td><td>Yes</td><td>Sometimes</td><td>Yes</td></tr>
 <tr><td>Auto-deletion</td><td>Yes</td><td>No</td><td>No</td></tr>
 <tr><td>End-to-end encrypted</td><td>Yes</td><td>Sometimes</td><td>Varies</td></tr>
-<tr><td>Code formatting</td><td>Yes</td><td>Limited</td><td>Limited</td></tr>
 <tr><td>Link-based sharing</td><td>Yes</td><td>No</td><td>No</td></tr>
 </table>
 
@@ -62,7 +60,7 @@ const content = `
 <p>Sometimes you need to send text without revealing your identity. SnapText doesn't require any personal information—no email, no phone number, no name. What you share is completely anonymous.</p>
 
 <h2>Try Sending Text Now</h2>
-<p>Experience the easiest way to <strong>send text</strong> securely. Whether you need to share a quick note, sensitive data, or code snippets, SnapText has you covered. Start sending text for free, no strings attached.</p>
+<p>Experience the easiest way to <strong>send text</strong> securely. Whether you need to share a quick note or sensitive data, SnapText has you covered. Start sending text for free, no strings attached.</p>
 `;
 
 const relatedLinks = [

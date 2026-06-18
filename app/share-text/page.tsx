@@ -4,7 +4,7 @@ import SeoPage from "@/components/SeoPage";
 export const metadata: Metadata = {
   title: "Share Text - Secure Temporary Text Sharing | SnapText",
   description:
-    "Share text securely with temporary links that self-destruct after reading. Perfect for passwords, code snippets, and sensitive information. Free and instant.",
+    "Share text securely with temporary links that self-destruct after reading. Perfect for passwords and sensitive information. Free and instant.",
   alternates: { canonical: "https://send-anywhere-text.com/share-text"}, keywords:
     "share text, text sharing, share text online, share text link, share text message, share text securely, temporary text share",
 };
@@ -28,7 +28,6 @@ const content = `
 <li><strong>Burn After Reading:</strong> Messages disappear after viewing</li>
 <li><strong>No Account Needed:</strong> Share text anonymously</li>
 <li><strong>End-to-End Encrypted:</strong> Your text stays private</li>
-<li><strong>Code-Friendly:</strong> Preserves formatting and indentation</li>
 <li><strong>Time-Limited:</strong> Links expire after 24 hours if never opened</li>
 </ul>
 
@@ -39,8 +38,8 @@ const content = `
 <h3>API Keys and Secrets</h3>
 <p>Developers frequently need to share API keys, database credentials, or secret tokens. Send them through SnapText for one-time access only.</p>
 
-<h3>Code Snippets</h3>
-<p>Share code without losing formatting. Our tool preserves indentation, special characters, and code structure. Perfect for debugging, code review, and collaboration.</p>
+<h3>Secure Instructions</h3>
+<p>Share setup steps, copied terminal output, or structured notes without leaving them behind in a permanent chat thread.</p>
 
 <h3>Sensitive Messages</h3>
 <p>Share personal messages, health information, financial details, or anything private. The message is accessible once and then erased.</p>
@@ -122,7 +121,7 @@ export default function ShareTextPage() {
   return (
     <SeoPage
       title="Share Text - Secure Temporary Text Sharing"
-      description="Share text securely with temporary links. Perfect for passwords, code, and sensitive info."
+      description="Share text securely with temporary links. Perfect for passwords and sensitive info."
       keywords="share text, text sharing, secure text"
       h1="Share Text - Secure Temporary Text Sharing"
       content={content}

@@ -1,36 +1,68 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
-  color-scheme: light;
+  --background: #050816;
+  --foreground: #f8fafc;
+  color-scheme: dark;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-manrope);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
 html {
   min-height: 100%;
-  background: #ffffff;
+  background: #050816;
+  scroll-behavior: smooth;
 }
 
 body {
   position: relative;
   min-height: 100vh;
-  background-color: #ffffff;
-  background-image: none;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at top, rgba(99, 75, 255, 0.16), transparent 34%),
+    radial-gradient(circle at 85% 18%, rgba(69, 112, 255, 0.16), transparent 28%),
+    radial-gradient(circle at 50% 100%, rgba(125, 83, 255, 0.1), transparent 28%),
+    linear-gradient(180deg, #060816 0%, #050714 54%, #04050f 100%);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), "Segoe UI", sans-serif;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
 }
 
 body::before {
-  content: none;
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  opacity: 0.2;
+  background-image: radial-gradient(
+    circle at 2px 2px,
+    rgba(255, 255, 255, 0.08) 1px,
+    transparent 0
+  );
+  background-size: 30px 30px;
+}
+
+body::after {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(122, 92, 255, 0.18), transparent 22%),
+    radial-gradient(circle at 50% 54%, rgba(66, 104, 255, 0.12), transparent 18%);
+  filter: blur(24px);
 }
 
 ::selection {
-  background: rgba(14, 165, 233, 0.18);
+  background: rgba(122, 92, 255, 0.35);
+}
+
+.font-display {
+  font-family: var(--font-sora), "Segoe UI", sans-serif;
 }

@@ -10,7 +10,6 @@ export const metadata: Metadata = {
     "SNAPTEXT privacy policy",
     "temporary sharing privacy",
     "text sharing data policy",
-    "code snippet privacy policy",
     "data retention policy",
     "temporary content privacy",
   ],
@@ -45,16 +44,16 @@ export default function PrivacyPolicyPage() {
 
       <div className="mx-auto mt-14 w-full max-w-[1320px] px-4 sm:mt-16 sm:px-6 lg:mt-20 lg:px-8">
         <section className="grid gap-12 lg:grid-cols-[220px_minmax(0,1fr)]">
-          <aside className="lg:sticky lg:top-24 lg:self-start">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-sky-700">
+          <aside className="rounded-[2rem] border border-white/10 bg-[rgba(10,14,31,0.88)] p-5 text-white shadow-[0_24px_60px_-38px_rgba(0,0,0,0.95)] lg:sticky lg:top-24 lg:self-start">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#7d93ff]">
               On this page
             </p>
-            <nav className="mt-4 space-y-2 border-l border-slate-200 pl-4">
+            <nav className="mt-4 space-y-2 border-l border-white/10 pl-4">
               {policySections.map((section) => (
                 <a
                   key={section.id}
                   href={`#${section.id}`}
-                  className="block py-2 text-sm font-medium text-slate-600 transition hover:text-slate-950"
+                  className="block py-2 text-sm font-medium text-white/58 transition hover:text-white"
                 >
                   {section.label}
                 </a>
@@ -62,19 +61,19 @@ export default function PrivacyPolicyPage() {
             </nav>
           </aside>
 
-          <div className="space-y-14">
+          <div className="space-y-14 rounded-[2.4rem] border border-white/10 bg-[linear-gradient(180deg,rgba(18,21,45,0.97)_0%,rgba(11,15,33,0.98)_100%)] px-6 py-8 text-white shadow-[0_35px_80px_-45px_rgba(0,0,0,1)] sm:px-8 lg:px-10">
             <section id="introduction" className="scroll-mt-28">
-              <h2 className="text-3xl font-semibold tracking-tight text-slate-950">
+              <h2 className="text-3xl font-semibold tracking-tight text-white">
                 Introduction
               </h2>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 SNAPTEXT is built around temporary content exchange. The platform
-                is designed to help users share text, notes, commands, and code
-                snippets through short-lived access patterns instead of permanent
-                publishing. Because temporary sharing still involves the handling
-                of information, privacy expectations remain important.
+                is designed to help users share text, notes, and commands through
+                short-lived access patterns instead of permanent publishing.
+                Because temporary sharing still involves the handling of
+                information, privacy expectations remain important.
               </p>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 This policy explains what kinds of information may be processed,
                 why that processing may happen, how temporary retention fits into
                 the product model, and how security, moderation, and operational
@@ -82,18 +81,17 @@ export default function PrivacyPolicyPage() {
               </p>
             </section>
 
-            <section id="information-we-handle" className="scroll-mt-28 border-t border-slate-200 pt-10">
-              <h2 className="text-3xl font-semibold tracking-tight text-slate-950">
+            <section id="information-we-handle" className="scroll-mt-28 border-t border-white/10 pt-10">
+              <h2 className="text-3xl font-semibold tracking-tight text-white">
                 Information we handle
               </h2>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 Depending on the specific product flow, SnapText may handle content
                 you intentionally submit for sharing, including plain text,
-                formatted code snippets, selected language preferences, temporary
-                code identifiers, expiry timestamps, and short-lived delivery
-                state information.
+                temporary code identifiers, expiry timestamps, and short-lived
+                delivery state information.
               </p>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 The service may also process limited operational information such
                 as API request events, timestamps, system errors, anti-abuse
                 signals, delivery markers, and technical records needed to run,
@@ -102,18 +100,18 @@ export default function PrivacyPolicyPage() {
               </p>
             </section>
 
-            <section id="how-we-use-information" className="scroll-mt-28 border-t border-slate-200 pt-10">
-              <h2 className="text-3xl font-semibold tracking-tight text-slate-950">
+            <section id="how-we-use-information" className="scroll-mt-28 border-t border-white/10 pt-10">
+              <h2 className="text-3xl font-semibold tracking-tight text-white">
                 How we use information
               </h2>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 Information may be used to create temporary share codes, deliver
                 content to the intended receiver, track delivery state, improve
                 product reliability, reduce abuse, and support a clean temporary
                 sharing experience for individuals, teams, and future commercial
                 platform users.
               </p>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 SnapText may also use limited data for service analytics, incident
                 response, platform stability, product improvement, feature
                 planning, and future security mechanisms such as rate limiting,
@@ -122,17 +120,17 @@ export default function PrivacyPolicyPage() {
               </p>
             </section>
 
-            <section id="retention-and-deletion" className="scroll-mt-28 border-t border-slate-200 pt-10">
-              <h2 className="text-3xl font-semibold tracking-tight text-slate-950">
+            <section id="retention-and-deletion" className="scroll-mt-28 border-t border-white/10 pt-10">
+              <h2 className="text-3xl font-semibold tracking-tight text-white">
                 Retention and deletion
               </h2>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 SNAPTEXT is designed around short-lived content retention. Shared
                 content is not intended to remain available indefinitely. Expiry
                 windows, temporary code validity, and burn-style lifecycle controls
                 are part of the current and future product model.
               </p>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 Even when user-submitted content expires quickly, limited
                 operational records, abuse signals, debugging logs, or
                 security-related system information may remain for a reasonable
@@ -141,18 +139,18 @@ export default function PrivacyPolicyPage() {
               </p>
             </section>
 
-            <section id="security" className="scroll-mt-28 border-t border-slate-200 pt-10">
-              <h2 className="text-3xl font-semibold tracking-tight text-slate-950">
+            <section id="security" className="scroll-mt-28 border-t border-white/10 pt-10">
+              <h2 className="text-3xl font-semibold tracking-tight text-white">
                 Security
               </h2>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 We take temporary sharing security seriously, but no online service
                 should be described as fully non-hackable or risk free. Users
                 should avoid sending highly sensitive personal, financial, or
                 regulated information unless the security model clearly supports
                 that level of use.
               </p>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 Security improvements may include stronger rate limiting, safer
                 code generation, suspicious activity detection, moderation
                 controls, anti-bruteforce protections, access control refinements,
@@ -161,29 +159,29 @@ export default function PrivacyPolicyPage() {
               </p>
             </section>
 
-            <section id="acceptable-use" className="scroll-mt-28 border-t border-slate-200 pt-10">
-              <h2 className="text-3xl font-semibold tracking-tight text-slate-950">
+            <section id="acceptable-use" className="scroll-mt-28 border-t border-white/10 pt-10">
+              <h2 className="text-3xl font-semibold tracking-tight text-white">
                 Acceptable use
               </h2>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 SNAPTEXT is not intended to support illegal activity, harmful
                 content distribution, malware sharing, scams, harassment,
                 exploitation material, or other abusive use. Moderation systems,
                 risk detection, trust controls, and platform restrictions may be
                 added or expanded to reduce harm and maintain service integrity.
               </p>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 Where necessary, SnapText may investigate misuse, apply technical
                 controls, block abusive behavior, or respond to legal obligations
                 involving the operation and safety of the service.
               </p>
             </section>
 
-            <section id="your-rights" className="scroll-mt-28 border-t border-slate-200 pt-10">
-              <h2 className="text-3xl font-semibold tracking-tight text-slate-950">
+            <section id="your-rights" className="scroll-mt-28 border-t border-white/10 pt-10">
+              <h2 className="text-3xl font-semibold tracking-tight text-white">
                 Your rights
               </h2>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 Depending on your location and applicable law, you may have rights
                 relating to access, correction, deletion, or questions about how
                 information is used. Because SnapText centers on temporary flows,
@@ -192,11 +190,11 @@ export default function PrivacyPolicyPage() {
               </p>
             </section>
 
-            <section id="policy-updates" className="scroll-mt-28 border-t border-slate-200 pt-10">
-              <h2 className="text-3xl font-semibold tracking-tight text-slate-950">
+            <section id="policy-updates" className="scroll-mt-28 border-t border-white/10 pt-10">
+              <h2 className="text-3xl font-semibold tracking-tight text-white">
                 Policy updates
               </h2>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 This privacy policy may be updated over time to reflect product
                 changes, operational improvements, legal requirements, or stronger
                 security and moderation practices. When meaningful revisions are
@@ -204,17 +202,17 @@ export default function PrivacyPolicyPage() {
               </p>
             </section>
 
-            <section id="contact" className="scroll-mt-28 border-t border-slate-200 pt-10">
-              <h2 className="text-3xl font-semibold tracking-tight text-slate-950">
+            <section id="contact" className="scroll-mt-28 border-t border-white/10 pt-10">
+              <h2 className="text-3xl font-semibold tracking-tight text-white">
                 Contact
               </h2>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 If you have a question about this privacy policy, a concern about
                 how SnapText handles temporary content, or a privacy-related issue,
                 please visit our{" "}
                 <Link
                   href="/contact"
-                  className="font-medium text-sky-700 hover:text-sky-800"
+                  className="font-medium text-[#8aa5ff] hover:text-white"
                 >
                   Contact page
                 </Link>

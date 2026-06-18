@@ -4,7 +4,7 @@ import SeoPage from "@/components/SeoPage";
 export const metadata: Metadata = {
   title: "Text Sharing - Share Text Securely Online | SnapText",
   description:
-    "Share text online with secure, temporary links. Burn-after-reading text sharing for passwords, code, and sensitive data. Free and anonymous.",
+    "Share text online with secure, temporary links. Burn-after-reading text sharing for passwords and sensitive data. Free and anonymous.",
   alternates: { canonical: "https://send-anywhere-text.com/text-sharing"}, keywords:
     "text sharing, share text online, text sharing platform, online text sharing, share text link, share text message, temporary text, ephemeral text",
 };
@@ -46,10 +46,9 @@ const content = `
 <h3>Developer Workflows</h3>
 <p>Perfect for technical text sharing:</p>
 <ul>
-<li>Code snippets and examples</li>
 <li>Error messages and logs</li>
-<li>Configuration files</li>
-<li>API documentation</li>
+<li>Configuration values</li>
+<li>API notes</li>
 <li>Terminal commands</li>
 </ul>
 
@@ -75,7 +74,6 @@ const content = `
 <ul>
 <li><strong>Burn After Reading:</strong> Messages permanently deleted after first view</li>
 <li><strong>Automatic Expiration:</strong> Unread messages expire in 24 hours</li>
-<li><strong>Code Preservation:</strong> Maintains formatting, indentation, special chars</li>
 <li><strong>No Registration:</strong> Start sharing immediately</li>
 <li><strong>Privacy First:</strong> No logs, no tracking, no data retention</li>
 <li><strong>Speed:</strong> Create and share links in seconds</li>

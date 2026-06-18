@@ -3,21 +3,19 @@ import Link from "next/link";
 import PageHero from "@/components/PageHero";
 
 export const metadata: Metadata = {
-  title: "About SNAPTEXT | Temporary Text and Code Sharing Platform",
+  title: "About SNAPTEXT | Temporary Text Sharing Platform",
   description:
-    "Learn about SNAPTEXT, a temporary text and code sharing platform built for faster delivery, short-lived access, and cleaner digital handoff workflows.",
+    "Learn about SNAPTEXT, a temporary text sharing platform built for faster delivery, short-lived access, and cleaner digital handoff workflows.",
   alternates: { canonical: "https://send-anywhere-text.com/about"}, keywords: [
     "about SNAPTEXT",
     "temporary sharing platform",
     "text sharing tool",
-    "code snippet sharing",
-    "developer sharing platform",
     "burn after reading app",
   ],
   openGraph: {
     title: "About SNAPTEXT",
     description:
-      "Learn how SNAPTEXT helps people share text and code with speed, clarity, and temporary access.",
+      "Learn how SNAPTEXT helps people share text with speed, clarity, and temporary access.",
   },
 };
 
@@ -40,9 +38,9 @@ const principles = [
 ];
 
 const useCases = [
-  "Moving commands and snippets between desktop and mobile devices.",
+  "Moving notes and short instructions between desktop and mobile devices.",
   "Sharing one-time setup instructions during calls or support sessions.",
-  "Passing structured text, config blocks, or code without opening heavy file tools.",
+  "Passing structured text or config blocks without opening heavy file tools.",
   "Delivering short-lived operational notes that should not sit around forever.",
 ];
 
@@ -51,8 +49,8 @@ export default function AboutPage() {
     <div className="pb-16 sm:pb-20">
       <PageHero
         eyebrow="ABOUT SNAPTEXT"
-        title="A cleaner way to share text and code for a short time."
-        subtitle="SNAPTEXT is built for fast, readable, temporary sharing. It gives people a simple path to send notes, snippets, commands, and lightweight code blocks without the friction of heavier platforms."
+        title="A cleaner way to share text for a short time."
+        subtitle="SNAPTEXT is built for fast, readable, temporary sharing. It gives people a simple path to send notes, snippets, and commands without the friction of heavier platforms."
       >
         <div className="flex flex-wrap items-center justify-center gap-3">
           <Link
@@ -71,22 +69,22 @@ export default function AboutPage() {
       </PageHero>
 
       <div className="mx-auto mt-12 w-full max-w-[1320px] px-4 sm:mt-14 sm:px-6 lg:mt-16 lg:px-8">
-        <section className="rounded-[2.25rem] bg-white px-6 py-8 shadow-[0_30px_90px_-60px_rgba(15,23,42,0.28)] sm:px-8 sm:py-10 lg:px-10 lg:py-12">
+        <section className="rounded-[2.25rem] border border-white/10 bg-[linear-gradient(180deg,rgba(18,21,45,0.97)_0%,rgba(11,15,33,0.98)_100%)] px-6 py-8 text-white shadow-[0_35px_80px_-45px_rgba(0,0,0,1)] sm:px-8 sm:py-10 lg:px-10 lg:py-12">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_320px]">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-700">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#7d93ff]">
                 WHO WE ARE
               </p>
-              <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
+              <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
                 SNAPTEXT is designed for practical, everyday digital handoff.
               </h2>
-              <p className="mt-5 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-5 text-sm leading-8 text-white/64 sm:text-base">
                 Not every piece of information needs a document, a permanent chat
                 thread, or a file upload flow. In many real workflows, people just
-                need a quick way to move a short message, a command, a code block,
-                or a small structured note from one place to another.
+                need a quick way to move a short message, a command, or a small
+                structured note from one place to another.
               </p>
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              <p className="mt-4 text-sm leading-8 text-white/64 sm:text-base">
                 SNAPTEXT exists to make that moment better. It is focused on
                 speed, temporary access, copy clarity, and a low-friction product
                 experience for developers, operators, freelancers, teams, and
@@ -94,14 +92,14 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="border-l-0 border-slate-100 pt-0 lg:border-l lg:pl-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+            <div className="border-l-0 border-white/10 pt-0 lg:border-l lg:pl-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white/42">
                 COMMON USE CASES
               </p>
-              <ul className="mt-5 space-y-4 text-sm leading-7 text-slate-600">
+              <ul className="mt-5 space-y-4 text-sm leading-7 text-white/64">
                 {useCases.map((useCase) => (
                   <li key={useCase} className="flex gap-3">
-                    <span className="mt-2 h-2 w-2 rounded-full bg-sky-500" />
+                    <span className="mt-2 h-2 w-2 rounded-full bg-[#7d93ff]" />
                     <span>{useCase}</span>
                   </li>
                 ))}
@@ -112,10 +110,10 @@ export default function AboutPage() {
 
         <section className="mt-16">
           <div className="mx-auto max-w-5xl text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-700">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#7d93ff]">
               PRODUCT PRINCIPLES
             </p>
-            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
+            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
               Less clutter, faster sharing, clearer delivery.
             </h2>
           </div>
@@ -123,10 +121,10 @@ export default function AboutPage() {
           <div className="mt-10 grid gap-10 md:grid-cols-3">
             {principles.map((principle) => (
               <div key={principle.title} className="px-2">
-                <h3 className="text-xl font-semibold text-slate-950">
+                <h3 className="text-xl font-semibold text-white">
                   {principle.title}
                 </h3>
-                <p className="mt-3 text-sm leading-8 text-slate-600 sm:text-base">
+                <p className="mt-3 text-sm leading-8 text-white/62 sm:text-base">
                   {principle.description}
                 </p>
               </div>

@@ -1,51 +1,6 @@
 import { NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
-import {
-  getShareStatusKey,
-  type ShareStatusPayload,
-} from "@/lib/share";
-
-function normalizeStatusPayload(rawStatus: unknown): ShareStatusPayload | null {
-  if (typeof rawStatus === "object" && rawStatus !== null) {
-    const payload = rawStatus as Partial<ShareStatusPayload>;
-
-    if (
-      payload.status === "pending" ||
-      payload.status === "received" ||
-      payload.status === "expired"
-    ) {
-      return {
-        status: payload.status,
-        copiedAt:
-          typeof payload.copiedAt === "number" ? payload.copiedAt : undefined,
-      };
-    }
-  }
-
-  if (typeof rawStatus !== "string") {
-    return null;
-  }
-
-  try {
-    const parsed = JSON.parse(rawStatus) as Partial<ShareStatusPayload>;
-
-    if (
-      parsed.status === "pending" ||
-      parsed.status === "received" ||
-      parsed.status === "expired"
-    ) {
-      return {
-        status: parsed.status,
-        copiedAt:
-          typeof parsed.copiedAt === "number" ? parsed.copiedAt : undefined,
-      };
-    }
-  } catch {
-    return null;
-  }
-
-  return null;
-}
+import { normalizeStoredSharePayload } from "@/lib/share";
 
 export async function GET(
   request: Request,
@@ -55,21 +10,26 @@ export async function GET(
     void request;
     const { code } = await params;
     const redis = getRedis();
-    const rawStatus = await redis.get<unknown>(getShareStatusKey(code));
+    const rawShare = await redis.get<unknown>(code);
 
-    if (rawStatus) {
-      const statusPayload = normalizeStatusPayload(rawStatus);
-
-      if (statusPayload) {
-        return NextResponse.json(statusPayload);
-      }
+    if (!rawShare) {
+      return NextResponse.json({ status: "expired" });
     }
 
-    const shareExists = await redis.exists(code);
+    const share = normalizeStoredSharePayload(rawShare);
+
+    if (!share) {
+      return NextResponse.json(
+        { error: "Stored share payload is invalid" },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
-      status: shareExists ? "pending" : "expired",
-    } satisfies ShareStatusPayload);
+      status: share.expiresAt <= Date.now() ? "expired" : share.status,
+      copiedAt: share.copiedAt,
+    });
+
   } catch (error) {
     console.error("Status API failed:", error);
 

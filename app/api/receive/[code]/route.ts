@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
 import {
-  getShareStatusKey,
   RECEIVED_STATUS_TTL_SECONDS,
-  type ShareStatusPayload,
+  normalizeStoredSharePayload,
 } from "@/lib/share";
 
 export async function POST(
@@ -14,18 +13,42 @@ export async function POST(
     void request;
     const { code } = await params;
     const redis = getRedis();
-    const copiedAt = Date.now();
-    const statusPayload: ShareStatusPayload = {
-      status: "received",
-      copiedAt,
-    };
+    const rawShare = await redis.get<unknown>(code);
 
-    await redis.set(getShareStatusKey(code), JSON.stringify(statusPayload), {
+    if (!rawShare) {
+      return NextResponse.json(
+        { error: "Code expired or not found" },
+        { status: 404 }
+      );
+    }
+
+    const share = normalizeStoredSharePayload(rawShare);
+
+    if (!share) {
+      return NextResponse.json(
+        { error: "Stored share payload is invalid" },
+        { status: 500 }
+      );
+    }
+
+    if (share.expiresAt <= Date.now() || share.status === "expired") {
+      return NextResponse.json(
+        { error: "Code expired or not found" },
+        { status: 410 }
+      );
+    }
+
+    share.status = "received";
+    share.copiedAt = Date.now();
+
+    await redis.set(code, JSON.stringify(share), {
       ex: RECEIVED_STATUS_TTL_SECONDS,
     });
-    await redis.del(code);
 
-    return NextResponse.json(statusPayload);
+    return NextResponse.json({
+      status: share.status,
+      copiedAt: share.copiedAt,
+    });
   } catch (error) {
     console.error("Receive API failed:", error);
 
