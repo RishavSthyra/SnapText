@@ -34,7 +34,7 @@ async function reserveUniqueCode(
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as { text?: unknown };
-    const text = typeof body.text === "string" ? body.text : "";
+   const text = typeof body.text === "string" ? body.text : "";
 
     if (!text.trim()) {
       return NextResponse.json({ error: "Text is required" }, { status: 400 });
